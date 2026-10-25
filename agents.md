@@ -22,7 +22,7 @@ copies it, edits `config.json`, pushes, and GitHub Actions produces the `.msi` /
 | `src-tauri/Cargo.toml` | `tauri` (`unstable` for child webviews), `serde`, `serde_json`, `url`. |
 | `src-tauri/tauri.conf.json` | Product metadata, `frontendDist: ../ui`, MSI + NSIS bundles. |
 | `ui/index.html` | Packaged dark splash asset. The bare-window shell is covered by its remote child views, so this is not mounted. |
-| `index.html` | GitHub Pages front door: explains the template flow and generates `config.json`. |
+| `index.html` | GitHub Pages front door: explains the copy-and-build flow and links to the installers. |
 | `.github/workflows/release.yml` | Windows installer build on push to `main` and manual dispatch. |
 
 ## Commands

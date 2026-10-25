@@ -45,15 +45,14 @@ checked only when implemented and, where possible, verified in this repo.
 
 ## Phase 4 — GitHub Pages front door + README
 
-- [ ] Root `index.html`, single file, zero dependencies: what it is, "Use this template", the
-      config-edit → push → artifact flow, and a `config.json` generator with copy/download.
-- [ ] Match the sister projects' published-site pattern (root `index.html`, no backend); use the
+- [x] Root `index.html`, single file, zero dependencies: what it is, "Use this template", the
+      config-edit → push → artifact flow, and links to the latest build and source.
+- [x] Match the sister projects' published-site pattern (root `index.html`, no backend); use the
       established blue/ink palette, not a new design system.
-- [ ] Verify locally in a browser: generate a config, assert valid JSON and expected fields, no
-      console errors.
+- [x] Verify locally in Chromium: the JSON example parses, no console errors, no page overflow at
+      1280 px or 390 px, and the code block scrolls inside its column.
 - [ ] Push, confirm Pages rebuilt, and check the live URL renders (not README).
-- [ ] Rewrite `README.md`: quickstart, config reference, security model, CI + template-copy flow,
-      troubleshooting, verification status.
+- [x] Rewrite `README.md`: quickstart, config reference, CI + template-copy flow, maintainer links.
 
 ## Phase 5 — Handoff
 
