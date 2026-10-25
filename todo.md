@@ -62,6 +62,12 @@ checked only when implemented and, where possible, verified in this repo.
 - [x] Clean `src-tauri/target/`, CI artifacts, screenshots, logs; `git status` clean except intended
       commits.
 
+## Playtest evidence
+
+- [x] Run the debug shell on X11 against local pages: window creation, both pane loads, allowlist
+      block, context-menu suppression, resize event, and `Ctrl+Shift+Q` exit all observed. Tauri's GTK
+      backend stacks child webviews, so dual-pane placement is not verifiable here.
+
 ## Manual / cannot verify in this Linux environment
 
 - [ ] Install and launch the MSI on Windows 10/11.

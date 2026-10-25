@@ -3,6 +3,43 @@
 All notable changes, decisions, and build-pipeline findings for the Powerapp Frontline Workspace
 Shell template. Newest first.
 
+## 2026-10-25 — First real execution on Linux (playtest)
+
+### Attempt
+
+- No Xvfb or xdotool on this host, but a live Xorg display `:1` (1920x1080, KWin/Xwayland) was
+  available, so the app ran there with `GDK_BACKEND=x11`, `WEBKIT_DISABLE_COMPOSITING_MODE=1`, and
+  `LIBGL_ALWAYS_SOFTWARE=1`. A throwaway XTest helper sent the right-click and the shortcut; both it
+  and the test pages were deleted afterwards.
+- Built a debug binary with a temporary config: 1200x800 window, 400 px right sidebar,
+  `allowedDomains: ["127.0.0.1"]`, and both panes pointed at local test pages on port 8766. The
+  product `config.json` was restored byte-for-byte and matches the commit; the test binary was
+  discarded.
+
+### Observed
+
+| Check | Result |
+| --- | --- |
+| Window creation | 1200x800 window titled `Frontline Playtest` appeared and stayed alive. |
+| Page loads | Server logged `GET /primary.html` and `/secondary.html`; app logged both `[NAVIGATION][ALLOWED]`. |
+| Allowlist | Auto-redirect to `http://example.com/blocked` logged `[SECURITY][BLOCKED] ... primary pane` and did not navigate. |
+| Resize | `wmctrl` to 1000x600 logged `[LAYOUT][SYNC] Viewports snapped to: 1000x600`. |
+| Context menu | Right-click produced `GET /ctx?pane=primary&prevented=true`; the injected suppression worked. |
+| Supervisor exit | XTest `Ctrl+Shift+Q` logged `[SECURITY] Supervisor exit activated` and the process exited. |
+| stderr | Empty throughout. |
+
+### Real limitation found
+
+Both pages reported the **same** viewport: 1142x380 at startup and 952x285 after the resize. They are
+stacked vertically, each taking half the window, not placed at the computed primary/sidebar rectangles.
+This is Tauri/Wry's Linux backend, not the layout maths: Tauri hands child webviews a `gtk::Box`, and
+wry packs them with `pack_start(webview, true, true, 0)`; its `set_bounds` only positions a child when
+the container is a `gtk::Fixed` (wry 0.57.1 `src/lib.rs:2031`, `src/webkitgtk/mod.rs:700-720`).
+
+No code change was made. The product target is Windows/WebView2, where child bounds are honored, and
+adding GTK-specific layout code would be platform sprawl for a Windows-only app. **Windows dual-pane
+placement remains unverified.** Kiosk, SSO, installer launch, and memory use were not exercised.
+
 ## 2026-10-25 — Pages front door and README published
 
 ### Shipped

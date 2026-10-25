@@ -84,6 +84,10 @@ reads it at runtime; this template embeds it, so it must be committed.)
 | `index.html` / README | Serve locally, exercise the page in a browser, then check the live Pages URL |
 | Shell behavior | Run on Windows and confirm pane layout, blocked navigation log, kiosk, `Ctrl+Shift+Q` |
 
+Linux playtests have a known trap: Tauri/Wry packs child webviews into a `gtk::Box` and ignores
+`add_child` bounds, so both panes stack vertically. The product target is Windows/WebView2. Do not add
+GTK-specific layout code unless cross-platform becomes a real requirement.
+
 CI cache keys must only be written by successful builds. `cache-on-failure` once saved an incomplete
 target under a reusable key, so every later run reported the cache as current and recompiled the
 dependency tree. The workflow uses `prefix-key: v1`; bump it only to invalidate a poisoned cache.
