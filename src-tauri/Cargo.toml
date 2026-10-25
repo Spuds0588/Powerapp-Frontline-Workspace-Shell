@@ -1,0 +1,18 @@
+[package]
+name = "frontline-desktop-shell"
+version = "1.0.0"
+description = "Hardened low-memory desktop workspace container for Power Apps and Fabric"
+authors = ["Enterprise Operations"]
+edition = "2021"
+
+[dependencies]
+tauri = { version = "2", features = ["unstable"] }
+tauri-plugin-global-shortcut = "2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+url = "2.5"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"

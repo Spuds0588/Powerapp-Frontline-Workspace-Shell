@@ -1,0 +1,7 @@
+# Rust build output and generated schemas
+src-tauri/target/
+src-tauri/gen/schemas/
+
+# Local logs and OS noise
+*.log
+.DS_Store

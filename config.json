@@ -1,0 +1,34 @@
+{
+  "title": "Frontline Operations Console",
+  "kioskMode": false,
+  "fullscreen": false,
+  "windowWidth": 1600.0,
+  "windowHeight": 900.0,
+  "disableContextMenu": true,
+  "allowedDomains": [
+    "apps.powerapps.com",
+    "content.powerapps.com",
+    "login.microsoftonline.com",
+    "login.windows.net",
+    "aadcdn.msauth.net",
+    "aadcdn.msftauth.net",
+    "msft.sts.microsoft.com",
+    "autologon.microsoftazuread-sso.com",
+    "teams.microsoft.com",
+    "app.fabric.microsoft.com",
+    "app.powerbi.com"
+  ],
+  "layout": {
+    "mode": "dual",
+    "sidebarPosition": "right",
+    "sidebarWidth": 460.0
+  },
+  "panes": {
+    "primary": {
+      "url": "https://apps.powerapps.com"
+    },
+    "secondary": {
+      "url": "https://teams.microsoft.com"
+    }
+  }
+}

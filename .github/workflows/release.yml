@@ -1,0 +1,61 @@
+name: Build Enterprise Desktop Shell
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Windows installers
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.95.0
+
+      - name: Cache Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+          cache-on-failure: true
+
+      - name: Install Tauri CLI
+        run: npm install --global @tauri-apps/cli@2.12.4
+
+      - name: Verify toolchain
+        run: |
+          rustc --version
+          tauri --version
+
+      - name: Build MSI and NSIS installers
+        run: tauri build --ci --bundles msi,nsis
+
+      - name: List installers
+        run: Get-ChildItem -Recurse src-tauri/target/release/bundle | Select-Object FullName, Length
+
+      - name: Upload installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: FrontlineShell-Windows-Installer
+          path: |
+            src-tauri/target/release/bundle/msi/*.msi
+            src-tauri/target/release/bundle/nsis/*.exe
+          if-no-files-found: error
