@@ -3,6 +3,43 @@
 All notable changes, decisions, and build-pipeline findings for the Powerapp Frontline Workspace
 Shell template. Newest first.
 
+## 2026-10-25 — Pages front door and README published
+
+### Shipped
+
+- Root `index.html` is now the published front door. It follows the sister landing-page pattern
+  (max-width wrap, badge, hero, card grid, numbered steps, callout, footer) and uses this product's
+  navy/cyan palette rather than importing the sister's emerald theme.
+- The page explains the copy → edit `config.json` → commit → Actions artifact flow, links to the
+  template's latest build, and names the default-config caveat: the public build is not the maker's
+  configuration.
+- **No config generator.** The earlier plan for a JSON-generating widget was dropped. Copying the
+  template is the intended population method, the repo already ships a complete `config.json`, and the
+  page is a front door, not a wizard. This keeps the site one static file with no JavaScript.
+- `README.md` is now the terse quickstart: use the template, edit the config, commit, download the
+  artifact, with `workflow_dispatch` as the fallback and links to `agents.md`/`history.md`.
+
+### Verified
+
+- Local Chromium at 1280 px and 390 px: title and all four section headings render; the 14 links
+  are present and every GitHub destination returns 200; the embedded JSON example parses; no console
+  errors; no page-level horizontal overflow.
+  The mobile code block scrolls inside its own column after adding `min-width: 0` to the split's grid
+  children, which fixed a real page-overflow bug.
+- Pages build `40197215452` succeeded (legacy `main` / root, Jekyll, 10s deploy). No Pages workflow
+  was added; the branch source picked up the new root `index.html` automatically.
+- Live `https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/` returns 200, serves the new
+  title and H1, and no longer contains the README's "This site is open source" marker. Favicon is 200.
+- The release build for the same commit (`40197215725`) is green, so the site commit did not disturb
+  the installer pipeline.
+
+### Final state
+
+- Repo remains flagged as a template; Actions is enabled and Pages is built from legacy `main` / root.
+- The workspace is 304 KB excluding `.git`; `src-tauri/target` and `src-tauri/gen` are removed.
+- Windows install, SSO, kiosk, and memory checks remain documented as manual in `todo.md`; they cannot
+  be exercised on this Linux host.
+
 ## 2026-10-25 — Windows build action proven end to end
 
 **Status:** `release.yml` is green on both `push` and `workflow_dispatch`. A fresh copy builds in

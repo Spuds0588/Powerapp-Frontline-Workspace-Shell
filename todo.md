@@ -51,15 +51,15 @@ checked only when implemented and, where possible, verified in this repo.
       established blue/ink palette, not a new design system.
 - [x] Verify locally in Chromium: the JSON example parses, no console errors, no page overflow at
       1280 px or 390 px, and the code block scrolls inside its column.
-- [ ] Push, confirm Pages rebuilt, and check the live URL renders (not README).
+- [x] Push, confirm Pages rebuilt, and check the live URL renders (not README).
 - [x] Rewrite `README.md`: quickstart, config reference, CI + template-copy flow, maintainer links.
 
 ## Phase 5 — Handoff
 
-- [ ] Repo remains flagged as a template; Actions and Pages enabled.
-- [ ] Record unverifiable Sprint 3 checks as manual: install the MSI on clean Windows, confirm
+- [x] Repo remains flagged as a template; Actions and Pages enabled.
+- [x] Record unverifiable Sprint 3 checks as manual: install the MSI on clean Windows, confirm
       zero-dependency operation, measure RSS < 90 MB, confirm blocked-navigation behavior on Windows.
-- [ ] Clean `src-tauri/target/`, CI artifacts, screenshots, logs; `git status` clean except intended
+- [x] Clean `src-tauri/target/`, CI artifacts, screenshots, logs; `git status` clean except intended
       commits.
 
 ## Manual / cannot verify in this Linux environment
