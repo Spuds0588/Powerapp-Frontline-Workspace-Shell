@@ -80,9 +80,13 @@ reads it at runtime; this template embeds it, so it must be committed.)
 | --- | --- |
 | Any Rust | `cargo fmt --check`, `cargo check --manifest-path src-tauri/Cargo.toml` |
 | `config.json` | `python3 -m json.tool`; a compile must fail on invalid JSON (build.rs enforces it) |
-| Workflow | YAML parse, then a real dispatched run; inspect logs and artifact names |
+| Workflow | YAML parse, then a real dispatched run; inspect logs, artifact names, and job wall time |
 | `index.html` / README | Serve locally, exercise the page in a browser, then check the live Pages URL |
 | Shell behavior | Run on Windows and confirm pane layout, blocked navigation log, kiosk, `Ctrl+Shift+Q` |
+
+CI cache keys must only be written by successful builds. `cache-on-failure` once saved an incomplete
+target under a reusable key, so every later run reported the cache as current and recompiled the
+dependency tree. The workflow uses `prefix-key: v1`; bump it only to invalidate a poisoned cache.
 
 `Ctrl+Shift+Q` is the supervisor exit and must work in kiosk mode. Keep it registered globally on the
 root window, not injected into the remote page.

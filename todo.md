@@ -32,16 +32,16 @@ checked only when implemented and, where possible, verified in this repo.
 
 ## Phase 3 — GitHub Actions installer build
 
-- [ ] `.github/workflows/release.yml` on `windows-latest`, triggered by push to `main` and
+- [x] `.github/workflows/release.yml` on `windows-latest`, triggered by push to `main` and
       `workflow_dispatch`.
-- [ ] Prebuilt Tauri CLI (npm global install) instead of `cargo install tauri-cli` source build.
-- [ ] Rust cache, `timeout-minutes`, `concurrency`, pinned action versions.
-- [ ] Upload `bundle/msi/*.msi` and `bundle/nsis/*.exe` with `if-no-files-found: error`.
-- [ ] Validate YAML locally, push, run the workflow, and record duration + every failure/fix in
+- [x] Prebuilt Tauri CLI (npm global install) instead of `cargo install tauri-cli` source build.
+- [x] Rust cache, `timeout-minutes`, `concurrency`, pinned action versions.
+- [x] Upload `bundle/msi/*.msi` and `bundle/nsis/*.exe` with `if-no-files-found: error`.
+- [x] Validate YAML locally, push, run the workflow, and record duration + every failure/fix in
       `history.md` (the user asked for reusable build-action findings).
-- [ ] Download the artifact and confirm both installer files exist and are non-trivial.
-- [ ] Confirm the workflow is re-runnable via `workflow_dispatch` and survives a clean run without
-      cache (delete cache or dispatch on a fresh branch if time allows).
+- [x] Download the artifact and confirm both installer files exist and are non-trivial.
+- [x] Confirm the workflow is re-runnable via `workflow_dispatch` and succeeds from a cold cache and
+      a warm cache (6m17s cold, 2m27s warm).
 
 ## Phase 4 — GitHub Pages front door + README
 

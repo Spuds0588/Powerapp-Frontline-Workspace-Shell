@@ -3,6 +3,74 @@
 All notable changes, decisions, and build-pipeline findings for the Powerapp Frontline Workspace
 Shell template. Newest first.
 
+## 2026-10-25 — Windows build action proven end to end
+
+**Status:** `release.yml` is green on both `push` and `workflow_dispatch`. A fresh copy builds in
+6m17s cold and 2m27s warm. Both installers were downloaded and inspected.
+
+### Observed runs
+
+| Run | Trigger | Result | Job wall | Build step | Cache |
+| --- | --- | --- | --- | --- | --- |
+| 40194743841 | push | failure | 1m28s | 1s | none |
+| 40194873593 | push | success | 5m43s | 284s | 88 MB (poisoned) |
+| 40195334411 | dispatch | success | 5m51s | 288s | 88 MB (poisoned) |
+| 40195872005 | push | success | 6m17s | 292s | cold `v1`; saved 372 MB |
+| 40196374924 | dispatch | success | 2m27s | 92s | 372 MB restored |
+
+Warm-run per-step wall time (40196374924): setup 1s, checkout 6s, Node 8s, Rust 12s, cache restore
+20s, CLI install 2s, build 92s, list 1s, upload 1s, post-cache 0s, post-checkout 2s. Total 147s.
+
+### Artifacts
+
+- `FrontlineShell_1.0.0_x64_en-US.msi` — 2,985,984 bytes, WiX 3.14.1 MSI, SHA-256
+  `5a7384fe4bf698a2a26059b21467a0c37608e707d45075013aace6174dcbced7`.
+- `FrontlineShell_1.0.0_x64-setup.exe` — 1,944,832 bytes, NSIS 3.13 self-extracting PE32, SHA-256
+  `88b67f43e3b8a07bae532ebeaf734f91dcb214e0b8f479a7fb915b7c1b2f87fd`.
+- Uploaded artifact `FrontlineShell-Windows-Installer.zip` — 4,702,521 bytes, still unexpired.
+- Hashes change run to run (embedded timestamps), so they are not a reproducibility check.
+
+**Landing locations.** CI checks out at `D:\a\<repo>\<repo>` and writes bundles to
+`src-tauri/target/release/bundle/msi/` and `.../bundle/nsis/`. `gh run download` preserves the
+`msi/` and `nsis/` subdirectories under the destination. The repo-root globs above are correct for a
+copied template because the checkout directory name changes with the repo.
+
+### Findings for the next Tauri template
+
+1. **PowerShell breaks a comma-separated `--bundles`.** `tauri build --ci --bundles msi,nsis` failed
+   in 1 second with `invalid value 'msi nsis'`; the comma became a space inside one argument. Because
+   `tauri.conf.json` already sets `bundle.targets` to both, the fix is to omit the flag entirely.
+   Use the config as the single source of truth.
+2. **`cache-on-failure` can poison a stable cache key.** The first run failed before compiling but
+   saved an 88 MB cache. Every later run restored it, reported `Cache up-to-date`, and never saved the
+   real target, so dependencies recompiled every time (284–292s build). Removing `cache-on-failure`
+   and bumping `prefix-key` to `v1` produced a 372 MB cache; build fell to 92s and the job to 2m27s.
+   Never let failed runs write a key that successful runs reuse.
+3. **Prebuilt Tauri CLI is fast.** `npm install -g @tauri-apps/cli@2.12.4` took 2–3s, versus compiling
+   `tauri-cli` with `cargo install`. npm had 2.12.4 while the Rust crate resolved 2.12.5; the patch
+   mismatch is harmless. Pin both, and expect npm to lag crates.io by a patch.
+4. **Pin Rust 1.95.0.** The global-shortcut plugin needs Rust 1.90+, and 1.95.0 is the version the
+   local `cargo check` used. The Windows runner also had 1.99.1 installed; `rust-cache` hashes the
+   installed Rust environment into its key, which is fine as long as setup stays pinned.
+5. **Tauri fetches bundler tooling on every run.** NSIS 3.13 plus `nsis_tauri_utils` 0.5.3 (~4s) and
+   WiX 3.14.1 (~1s) are downloaded outside `rust-cache`. They are not worth caching yet; budget
+   roughly 6s if adding more bundle targets.
+6. **Both bundles need no manual toolchain setup** on `windows-latest`. NSIS is produced first, then
+   WiX/MSI. Installers are unsigned, so SmartScreen warnings are expected until a certificate is
+   configured. The MSI filename carries `en-US` and both names carry `x64`.
+7. **Node 20 action warning.** `actions/checkout@v4`, `setup-node@v4`, and `upload-artifact@v4` run on
+   Node 24 with a deprecation warning. It does not fail; bump majors when the template is next touched.
+8. **Template-copy trigger.** There is no repository-created event. Both a normal push and
+   `workflow_dispatch` were proven here; the copy's initial commit may not run, so the maker's first
+   `config.json` edit is the natural trigger and the manual dispatch is the guaranteed fallback.
+   This must be the first thing the README says.
+
+### Not verified
+
+- Installing or launching either installer on Windows, SSO, kiosk behavior, and memory use. Only the
+  artifact structure was inspected (`file`), not executed.
+- A real repository copied from this template; no extra repo was created just for the test.
+
 ## 2026-10-25 — Phase 1–2 implemented and compile-verified
 
 ### Built
