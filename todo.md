@@ -81,7 +81,7 @@ verified in this repo.
       allowlist block was verified in the earlier local playtest and the code is unchanged (GTK
       stacking remains the known limitation).
 - [x] Record the demo run and findings in `history.md`.
-- [ ] Publish the new demo build as a `demo-latest` release and verify both assets download.
+- [x] Publish the new demo build as a `demo-latest` release and verify both assets download.
 
 ## Phase 7 — Future state (research complete, implementation deferred)
 

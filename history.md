@@ -3,6 +3,69 @@
 All notable changes, decisions, and build-pipeline findings for the Powerapp Frontline Workspace
 Shell template. Newest first.
 
+## 2026-10-25 — Real-app demo, launchable release, and a concurrency fix
+
+### Shipped
+
+- `demo/primary.html` and `demo/secondary.html` no longer use synthetic dispatch/chat UI. They show
+  labeled Microsoft Learn references: a Power Apps model-driven dashboard and a Microsoft Teams
+  intelligent recap. The reference tag and attribution make clear these are not live tenant data.
+- `demo/index.html` is now a browser preview of the shell with both panes, three visual layout
+  examples (dual right, dual left, single), the embedded demo config, and a download link for the
+  prebuilt installer.
+- Root `index.html` is rewritten around one hero, three build steps, and a copyable agent handoff
+  prompt modeled on the sister templates. The prompt tells an agent to read `agents.md`, ask for the
+  real URLs/domains/layout, edit `config.json`, and help the maker commit and build.
+- The original product brief was absorbed into `agents.md`, then removed from the repo. README,
+  todo, index, and history no longer link to it.
+- `.github/workflows/release.yml` now keys its concurrency group by the requested config. This was a
+  real bug, not a precaution: the first demo dispatch cancelled production push `40221906437` for the
+  same commit.
+- Published the `demo-latest` prerelease with both demo installers. The release is a prebuilt
+  evaluator snapshot, not the maker's artifact and not updated on every push.
+
+### Verified
+
+- Local JSON/YAML parse; local HTTP 200 for `/`, `/demo/`, both pane pages, both screenshots, and
+  `config.demo.json`. Chromium at 1280 and 390: no page-level overflow, both images load, both
+  iframes render, no console errors.
+- Demo build `40221913742` succeeded in 2m28s wall time. Downloaded both installers:
+  `FrontlineShell_1.0.0_x64_en-US.msi` (2,985,984 bytes) and
+  `FrontlineShell_1.0.0_x64-setup.exe` (1,948,204 bytes). Extracted the NSIS payload and confirmed
+  the embedded config contains `"title": "Frontline Demo Console"` and both
+  `spuds0588.github.io/.../demo/*.html` URLs, with no production title.
+- After the concurrency fix, production push `40222195603` (2m30s) and demo dispatch `40222203024`
+  (2m34s) ran at the same time and both succeeded. Neither was cancelled.
+- Pages build `40222195355` succeeded for `6afa415`. Live `/` and `/demo/` return 200 and serve the
+  new titles; the two screenshots and both iframe documents return 200; the live demo has no overflow
+  and no console errors. Release assets download over HTTP 200 at the sizes above.
+
+### CI lesson
+
+1. **A demo dispatch can cancel production unless the concurrency group includes the profile.** The
+   original group was `release-${{ github.ref }}`. Key it as
+   `release-${{ github.ref }}-${{ github.event.inputs.config || 'production' }}`. The default is what
+   makes a push (empty input) and a production dispatch share a lane while demo gets its own.
+2. **The launchable demo path is a release asset, not an Actions artifact.** Artifacts require a
+   GitHub login and expire; a prerelease asset is a plain public download. Build the demo first,
+   verify the embedded config, then attach it. Treat the release as a snapshot, not a per-push feed.
+3. **The demo can change without rebuilding the installer.** `config.demo.json` embeds absolute Pages
+   URLs, so editing the demo pages only needs a Pages deploy. A config change still requires a new
+   build/release.
+4. **The Node 20 deprecation warning is still present.** `actions/checkout@v4`, `setup-node@v4`, and
+   `upload-artifact@v4` are being forced onto Node 24. It is a warning, not a failure; bump the action
+   majors deliberately and rerun the workflow rather than changing all three blind.
+5. **Reference screenshots make the template legible.** The previous synthetic dashboard looked like
+   a generic admin app. The Power Apps purple bar and Teams chrome communicate the actual use case;
+   the tradeoff is attribution and the need to label them as references. Keep both.
+
+### Not verified
+
+- Installing either demo installer on Windows, and therefore WebView2 pane placement, kiosk, and the
+  shortcut under a real Windows session.
+- Fresh template-copy behavior. The trigger and fallback are documented and proven on this repo, but
+  no new repo was created from the template for this pass.
+
 ## 2026-10-25 — Future state: Linux and macOS builds (research only)
 
 **Verdict:** the build pipeline can produce Linux and macOS installers from native GitHub runners, but
