@@ -35,7 +35,9 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri -> target
-          cache-on-failure: true
+          # Only successful builds may write this key. A failed run once saved an
+          # incomplete target that later runs treated as complete; v1 starts clean.
+          prefix-key: v1
 
       - name: Install Tauri CLI
         run: npm install --global @tauri-apps/cli@2.12.4
