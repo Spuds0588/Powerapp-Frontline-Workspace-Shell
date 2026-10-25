@@ -33,6 +33,11 @@ Shell template. Newest first.
 - `demo/primary.html` and `demo/secondary.html` still render with the trimmed stylesheet.
 - `config.json` and `config.demo.json` still parse. The demo profile still points at the two
   `/demo/*.html` pages that remain in the repo.
+- Pages build `40225827354` succeeded in 50s from push `acb90db`. The live root returns 200, serves
+  the new scene markup, and loads the three new images. `/demo/` now returns 404 because the separate
+  landing page is gone; `/demo/primary.html` and `/demo/secondary.html` return 200 for the installer.
+- The docs-only push also ran production build `40225827234`, which succeeded in 2m04s and uploaded
+  `FrontlineShell-Windows-Installer` (4,704,738 bytes). No product code changed.
 
 ### Decision notes
 
@@ -47,10 +52,14 @@ Shell template. Newest first.
 
 ### Not verified in this pass
 
-- The live GitHub Pages deploy of this rewrite. The local page is verified; the push and Pages check
-  happen with the commit that publishes it.
 - Launching the demo installer on Windows. That remains the only place to judge real WebView2 pane
   placement.
+
+### CI note
+
+- A push that only changes pages or docs still runs the full Windows installer build. It passed, but
+  a future template can add a `paths` filter for the build workflow if docs-only pushes should not
+  spend Windows minutes. Do not add it until the maker's config-edit flow is unaffected.
 
 ## 2026-10-25 — Real-app demo, launchable release, and a concurrency fix
 

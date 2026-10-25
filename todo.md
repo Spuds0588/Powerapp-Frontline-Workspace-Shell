@@ -106,7 +106,7 @@ verified in this repo.
       the small inline script.
 - [x] Update README, `agents.md`, and attribution for the root-page demo.
 - [x] Verify in Chromium at 1280 and 390: every scene, every rail, no overflow, no console errors.
-- [ ] Push, confirm Pages rebuilds, and check the live root page.
+- [x] Push, confirm Pages rebuilds, and check the live root page.
 
 ## Playtest evidence
 
