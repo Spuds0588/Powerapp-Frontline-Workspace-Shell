@@ -18,7 +18,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: release-${{ github.ref }}
+  # A demo dispatch must not cancel the production build for the same commit.
+  group: release-${{ github.ref }}-${{ github.event.inputs.config || 'production' }}
   cancel-in-progress: true
 
 jobs:
