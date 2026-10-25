@@ -5,7 +5,6 @@ compiled into the binary, so the endpoint gets one `.msi` or `.exe` with no loos
 GitHub Actions builds both installers from a copied template.
 
 [Template page](https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/) &middot;
-[Demo preview](https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/demo/) &middot;
 [Download the demo installer](https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest) &middot;
 [Latest build](https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/actions/workflows/release.yml)
 
@@ -34,16 +33,15 @@ prompt is also in [index.html](index.html#agent).
 
 ## Demo build
 
-`demo/` shows the shell with two real product references: a Power Apps model-driven dashboard and a
-Microsoft Teams recap. The screenshots are static references, not live tenant data, so the demo runs
-without an account. `config.demo.json` points the shell at those published pages.
+The root page shows three reference pairings in a simulated desktop: Power Apps + Teams, Power Apps
++ Teams Phone, and Dynamics 365 + a Power Apps canvas app. Those are labeled Microsoft Learn
+screenshots, not live tenant data. `demo/` holds the two static pages the installer actually loads.
 
 - Download the unsigned demo installer from
   [Releases → demo-latest](https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest).
   Windows SmartScreen may warn; the build is not code-signed.
-- Or open the [browser preview](https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/demo/)
-  first.
-- To rebuild the demo, run **Actions → Build Enterprise Desktop Shell → Run workflow** with
+- The installer opens the dispatch pairing: a Power Apps dashboard and a Teams recap.
+- To rebuild it, run **Actions → Build Enterprise Desktop Shell → Run workflow** with
   **Configuration to embed** set to `demo`.
 
 The demo is a test profile, not the shipped default. `config.json` still points at Power Apps and

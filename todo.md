@@ -70,8 +70,8 @@ verified in this repo.
       profile into `config.json` before the build.
 - [x] Replace the synthetic dispatch board/chat with labeled Microsoft Learn references: a Power Apps
       model-driven dashboard and a Teams recap.
-- [x] Rebuild `demo/index.html` around the real panes, three layout examples, the embedded config,
-      and a link to the prebuilt demo installer.
+- [x] Rebuild the separate demo page around the real panes, three layout examples, the embedded
+      config, and a link to the prebuilt demo installer (later merged into root `index.html`).
 - [x] Update README, `agents.md`, and the Pages front door for the demo flow.
 - [x] Confirm Pages publishes `/demo/` and both pane pages return 200.
 - [x] Dispatch `config: demo`, watch the Windows run, and fix any failure.
@@ -94,6 +94,19 @@ verified in this repo.
       a Linux kiosk build.
 - [ ] Add macOS Developer ID signing/notarization and a DMG fallback before distributing a macOS
       build.
+
+## Phase 8 — Landing page as the demo
+
+- [x] Merge the separate demo page into the root `index.html`; delete `demo/index.html`.
+- [x] Replace the three same-app layout thumbnails with three real pairings on a simulated Windows
+      desktop: Power Apps + Teams, Power Apps + Teams Phone, and Dynamics 365 + Power Apps.
+- [x] Add labeled Microsoft Learn screenshots for Teams Phone and Dynamics 365, plus a Power Apps
+      canvas app crop. Keep the existing Power Apps and Teams references.
+- [x] Add a three-scene switcher and right/left/single rail control; keep the page static apart from
+      the small inline script.
+- [x] Update README, `agents.md`, and attribution for the root-page demo.
+- [x] Verify in Chromium at 1280 and 390: every scene, every rail, no overflow, no console errors.
+- [ ] Push, confirm Pages rebuilds, and check the live root page.
 
 ## Playtest evidence
 

@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Powerapp Frontline Workspace Shell — Tauri desktop template</title>
-<meta name="description" content="A free, MIT-licensed Tauri v2 template that packages Power Apps, Teams, and other approved web tools into one locked-down Windows desktop app. Copy it, edit config.json, commit, and GitHub Actions builds the installers.">
+<meta name="description" content="A free, MIT-licensed Tauri v2 template that packages Power Apps, Teams, Teams Phone, or your CRM into one locked-down Windows desktop app. Copy it, edit config.json, commit, and GitHub Actions builds the installers.">
 <link rel="canonical" href="https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Powerapp Frontline Workspace Shell — Tauri desktop template">
-<meta property="og:description" content="One locked-down Windows window for Power Apps, Teams, and the rest of the frontline stack. Configure one file; GitHub Actions builds the installers.">
+<meta property="og:description" content="One locked-down Windows window for Power Apps, Teams, Teams Phone, and your CRM. Configure one file; GitHub Actions builds the installers.">
 <meta property="og:url" content="https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0b0f19">
@@ -25,18 +25,24 @@
     --faint: #64748b;
     --accent: #38bdf8;
     --code: #7dd3fc;
+    --purple: #742774;
+    --teams: #5b5fc7;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg);
+    background:
+        radial-gradient(ellipse 70% 40% at 10% 0%, rgba(56,189,248,.10), transparent 60%),
+        radial-gradient(ellipse 60% 35% at 90% 4%, rgba(116,39,116,.13), transparent 60%),
+        var(--bg);
     color: var(--ink);
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
-.wrap { max-width: 980px; margin: 0 auto; padding: 56px 22px 48px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 54px 22px 48px; }
 a { color: var(--code); text-decoration: none; }
 a:hover { text-decoration: underline; }
-a:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 img { display: block; max-width: 100%; }
 code {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -47,12 +53,8 @@ code {
     color: var(--code);
 }
 
-.hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.02fr) minmax(320px, .98fr);
-    gap: 40px;
-    align-items: center;
-}
+/* Hero */
+.hero { max-width: 820px; margin-bottom: 34px; }
 .badge {
     display: inline-block;
     font-size: 11px;
@@ -67,12 +69,13 @@ code {
     margin-bottom: 18px;
 }
 h1 {
-    font-size: clamp(32px, 5vw, 44px);
-    line-height: 1.1;
-    letter-spacing: -.02em;
+    font-size: clamp(38px, 6vw, 58px);
+    line-height: 1.03;
+    letter-spacing: -.035em;
     margin-bottom: 14px;
+    max-width: 760px;
 }
-.lede { font-size: 16.5px; color: var(--muted); margin-bottom: 24px; }
+.lede { font-size: 17.5px; color: var(--muted); max-width: 690px; margin-bottom: 24px; }
 .lede strong { color: var(--ink); }
 .cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .btn {
@@ -87,30 +90,263 @@ h1 {
 .btn-primary { background: linear-gradient(135deg, #2f6fed, #5964a6); color: #fff; }
 .btn-secondary { background: rgba(255,255,255,.04); color: var(--ink); border: 1px solid var(--border); }
 .micro { font-size: 12px; color: var(--faint); margin-top: 14px; }
-
-.window {
+.micro a { color: var(--muted); }
+.stack { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 20px; }
+.stack span {
+    font-size: 11px;
+    font-weight: 600;
+    color: #cbd5e1;
     border: 1px solid var(--border);
-    border-radius: 14px;
-    background: var(--panel-2);
+    background: rgba(255,255,255,.025);
+    border-radius: 999px;
+    padding: 4px 10px;
+}
+.stack span::before {
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: 1px;
+    background: var(--accent);
+}
+.stack span:nth-child(2)::before { background: var(--teams); }
+.stack span:nth-child(3)::before { background: #2f9e8f; }
+.stack span:nth-child(4)::before { background: #b7791f; }
+
+/* Sections */
+.section-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 28px;
+    margin: 42px 0 14px;
+}
+.section-head h2 { font-size: clamp(24px, 3vw, 30px); letter-spacing: -.025em; line-height: 1.15; }
+.section-head p { max-width: 420px; font-size: 13.5px; color: var(--faint); }
+.eyebrow {
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+}
+h2 { font-size: 22px; margin: 42px 0 8px; letter-spacing: -.01em; }
+p { color: var(--muted); margin-bottom: 12px; }
+
+/* Demo stage */
+.stage {
+    background: linear-gradient(180deg, rgba(19,25,41,.9), rgba(13,19,34,.95));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 28px 70px rgba(0,0,0,.28);
+}
+.stage-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 2px 2px 12px;
+}
+.tabs { display: flex; gap: 6px; min-width: 0; }
+.tab {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    text-align: left;
+    padding: 7px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    line-height: 1.25;
+    min-width: 0;
+}
+.tab span { display: block; font-size: 12.5px; font-weight: 700; color: #cbd5e1; }
+.tab small { display: block; font-size: 10px; color: var(--faint); white-space: nowrap; }
+.tab:hover { background: rgba(255,255,255,.04); }
+.tab[aria-selected="true"] {
+    background: rgba(56,189,248,.09);
+    border-color: rgba(56,189,248,.28);
+}
+.tab[aria-selected="true"] span { color: #f8fafc; }
+.tab[aria-selected="true"] small { color: var(--accent); }
+.layouts {
+    display: flex;
+    flex-shrink: 0;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(0,0,0,.16);
+}
+.layouts button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--faint);
+    font-size: 10.5px;
+    font-weight: 650;
+    padding: 5px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.layouts button:hover { color: var(--ink); }
+.layouts button[aria-pressed="true"] { background: #24314c; color: #f8fafc; }
+
+/* Simulated Windows desktop */
+.desktop {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 11px;
     overflow: hidden;
-    box-shadow: 0 24px 60px rgba(0,0,0,.35);
+    background:
+        radial-gradient(90% 120% at 18% 8%, rgba(56,189,248,.52) 0%, transparent 46%),
+        radial-gradient(80% 110% at 88% 16%, rgba(124,58,237,.46) 0%, transparent 48%),
+        radial-gradient(110% 120% at 52% 112%, rgba(37,99,235,.42) 0%, transparent 58%),
+        linear-gradient(135deg, #07101e 0%, #10203a 46%, #09111f 100%);
+}
+.desktop::before {
+    content: "";
+    position: absolute;
+    inset: -25% -10%;
+    background:
+        radial-gradient(ellipse 32% 42% at 34% 44%, rgba(255,255,255,.10), transparent 70%),
+        radial-gradient(ellipse 26% 34% at 70% 58%, rgba(56,189,248,.12), transparent 70%);
+    filter: blur(2px);
+    pointer-events: none;
+}
+.app-window {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 47%;
+    transform: translate(-50%, -50%);
+    width: 88%;
+    height: 84%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #2b3a55;
+    border-radius: 9px;
+    overflow: hidden;
+    background: #0a0f1a;
+    box-shadow: 0 30px 80px rgba(0,0,0,.52), 0 2px 0 rgba(255,255,255,.06) inset;
 }
 .window-bar {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 9px 12px;
-    background: #111827;
-    border-bottom: 1px solid var(--border);
+    gap: 7px;
+    height: 31px;
+    flex-shrink: 0;
+    padding: 0 10px;
+    background: linear-gradient(180deg, #162136, #0e1727);
+    border-bottom: 1px solid #27344a;
 }
-.dot { width: 7px; height: 7px; border-radius: 50%; background: #334155; }
-.window-title { margin-left: auto; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
-.window-body { display: grid; grid-template-columns: 1.65fr .85fr; gap: 1px; height: 280px; background: var(--border); }
-.window-body img { width: 100%; height: 100%; object-fit: cover; object-position: left top; }
-.window-caption { font-size: 11px; color: var(--faint); margin-top: 8px; }
+.win-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--purple), #3c2f6b);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 900;
+}
+.win-title { font-size: 9.5px; color: #cbd5e1; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.win-badge {
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    color: #7dd3fc;
+    border: 1px solid rgba(56,189,248,.3);
+    border-radius: 999px;
+    padding: 1px 5px;
+}
+.win-controls { margin-left: auto; display: flex; gap: 9px; align-items: center; padding-left: 8px; }
+.win-controls i { width: 7px; height: 7px; border-radius: 50%; background: #334155; display: block; }
+.panes { flex: 1; display: grid; min-height: 0; background: #060b14; }
+.panes.right { grid-template-columns: minmax(0, 1fr) 36%; }
+.panes.left { grid-template-columns: 36% minmax(0, 1fr); }
+.panes.left .side { order: -1; border-left: 0; border-right: 1px solid #24324a; }
+.panes.single { grid-template-columns: 1fr; }
+.panes.single .side { display: none; }
+.pane { position: relative; overflow: hidden; background: #0b1220; min-width: 0; }
+.pane + .pane { border-left: 1px solid #24324a; }
+.pane img { width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+.pane.side img { object-position: 32% top; }
 
-h2 { font-size: 22px; margin: 42px 0 8px; letter-spacing: -.01em; }
-p { color: var(--muted); margin-bottom: 12px; }
+.taskbar {
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 10px;
+    background: rgba(7,14,26,.78);
+    border-top: 1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(14px);
+}
+.start-mark {
+    display: grid;
+    grid-template-columns: repeat(2, 5px);
+    grid-template-rows: repeat(2, 5px);
+    gap: 1px;
+    margin-right: 2px;
+}
+.start-mark i { background: #8ecdf7; border-radius: 1px; display: block; }
+.task-search {
+    min-width: 100px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    border-radius: 5px;
+    background: rgba(255,255,255,.10);
+    color: #b7c6dc;
+    font-size: 8px;
+}
+.task-app {
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 8px;
+    font-weight: 800;
+    background: rgba(255,255,255,.11);
+}
+.task-app.pa { background: #742774; }
+.task-app.teams { background: #4f52b8; }
+.task-app.crm { background: #155e9b; }
+.task-app.phone { background: #167e8c; }
+.task-app.active { box-shadow: 0 2px 0 0 var(--accent); }
+.task-clock { margin-left: auto; color: #cbd5e1; font-size: 7.5px; line-height: 1.25; text-align: right; }
+.task-clock b { display: block; font-weight: 600; }
+
+.stage-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px 3px 2px;
+}
+.stage-meta p { margin: 0; font-size: 12.5px; color: var(--faint); }
+.stage-meta strong { color: #cbd5e1; }
+.stage-spec { white-space: nowrap; font-size: 11px; color: #7dd3fc; }
+.stage-attribution { padding: 7px 3px 0; font-size: 10.5px; color: #52627a; }
+.stage-attribution a { color: #7b8ca6; }
+
+/* Steps, agent, demo */
 .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
 .step {
     background: var(--panel);
@@ -167,22 +403,44 @@ p { color: var(--muted); margin-bottom: 12px; }
 .demo-box p { font-size: 13px; margin-bottom: 10px; }
 .demo-box p:last-child { margin-bottom: 0; }
 .demo-box strong { color: var(--ink); }
+.demo-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 4px; }
+.demo-actions .btn { font-size: 12px; padding: 8px 12px; }
 
 footer { margin-top: 52px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; }
 footer p { margin-bottom: 5px; font-size: 12px; }
 footer .small { color: var(--faint); }
 footer .connect { color: var(--muted); }
 footer .connect strong { color: var(--ink); }
+footer .refs { color: #52627a; font-size: 10.5px; line-height: 1.6; }
+footer .refs a { color: #7b8ca6; }
 
-@media (max-width: 840px) {
-    .wrap { padding: 44px 18px 40px; }
-    .hero { grid-template-columns: 1fr; gap: 28px; }
+@media (max-width: 860px) {
+    .wrap { padding: 40px 18px 40px; }
+    .section-head { display: block; }
+    .section-head p { margin-top: 8px; }
+    .stage-controls { flex-direction: column; align-items: stretch; }
+    .tabs { width: 100%; }
+    .tab { flex: 1; padding: 7px 8px; }
+    .tab small { font-size: 9px; }
+    .layouts { align-self: flex-start; }
     .steps { grid-template-columns: 1fr; }
-    .window-body { height: 220px; }
+    .app-window { width: 94%; height: 84%; }
+    .taskbar { height: 30px; }
+    .task-search { display: none; }
 }
-@media (max-width: 520px) {
-    .window-body { height: 180px; }
-    .window-title { display: none; }
+@media (max-width: 560px) {
+    .desktop { aspect-ratio: 4 / 3; }
+    .app-window { top: 47%; width: 94%; height: 86%; }
+    .taskbar { display: none; }
+    .win-title { max-width: 150px; }
+    .win-badge { display: none; }
+    .stage-meta { display: block; }
+    .stage-spec { display: block; margin-top: 4px; white-space: normal; }
+    .tab small { display: none; }
+    .tab span { font-size: 11.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; }
 }
 </style>
 </head>
@@ -190,39 +448,101 @@ footer .connect strong { color: var(--ink); }
 <div class="wrap">
 
 <header class="hero">
-    <div>
-        <span class="badge">Tauri v2 &middot; Windows 10/11 &middot; MIT</span>
-        <h1>One window for the frontline web.</h1>
-        <p class="lede"><strong>Powerapp Frontline Workspace Shell</strong> puts Power Apps, Teams, or a
-            second approved web app side by side in a native Windows app. Configure one file, commit, and
-            GitHub Actions builds the installers.</p>
-        <div class="cta-row">
-            <a class="btn btn-primary" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/generate">Use this template</a>
-            <a class="btn btn-secondary" href="demo/">Try the demo &rarr;</a>
-        </div>
-        <p class="micro">No Rust install. No loose config on the endpoint. The demo installer is on
-            <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest">Releases</a>.</p>
+    <span class="badge">Tauri v2 &middot; Windows 10/11 &middot; MIT</span>
+    <h1>One window for the frontline web.</h1>
+    <p class="lede"><strong>Powerapp Frontline Workspace Shell</strong> puts Power Apps beside Teams, a
+        phone console, or your CRM in one native Windows app. Pick two approved pages, dock the second
+        one left or right, and let GitHub Actions build the installer.</p>
+    <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/generate">Use this template</a>
+        <a class="btn btn-secondary" href="#examples">See the pairings &rarr;</a>
     </div>
-
-    <div>
-        <div class="window" aria-hidden="true">
-            <div class="window-bar">
-                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                <span class="window-title">Frontline Demo Console</span>
-            </div>
-            <div class="window-body">
-                <img src="demo/shots/model-app-sample.png" alt="">
-                <img src="demo/shots/teams-recap.png" alt="">
-            </div>
-        </div>
-        <p class="window-caption">Reference layout: Power Apps and Microsoft Teams. Screenshots from
-            Microsoft Learn; not live tenant data.</p>
+    <p class="micro">No Rust install. No loose config on the endpoint. The demo installer is on
+        <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest">Releases</a>.</p>
+    <div class="stack" aria-label="Example app stack">
+        <span>Power Apps</span>
+        <span>Microsoft Teams</span>
+        <span>Teams Phone</span>
+        <span>Dynamics 365</span>
     </div>
 </header>
 
 <main>
+<section id="examples" aria-labelledby="examples-title">
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Desktop scale</span>
+            <h2 id="examples-title">Three ways a shift actually looks.</h2>
+        </div>
+        <p>Reference screenshots from real Microsoft products, shown at window scale. Pick a pairing,
+            then move the second pane.</p>
+    </div>
+
+    <div class="stage">
+        <div class="stage-controls">
+            <div class="tabs" role="tablist" aria-label="Example app pairing">
+                <button class="tab" type="button" role="tab" data-scene="dispatch" aria-selected="true" aria-controls="panes">
+                    <span>Dispatch</span><small>Power Apps + Teams</small>
+                </button>
+                <button class="tab" type="button" role="tab" data-scene="field" aria-selected="false" aria-controls="panes">
+                    <span>Field</span><small>Power Apps + Teams Phone</small>
+                </button>
+                <button class="tab" type="button" role="tab" data-scene="sales" aria-selected="false" aria-controls="panes">
+                    <span>Sales</span><small>Dynamics 365 + Power Apps</small>
+                </button>
+            </div>
+            <div class="layouts" role="group" aria-label="Pane layout">
+                <button type="button" data-layout="right" aria-pressed="true">Right rail</button>
+                <button type="button" data-layout="left" aria-pressed="false">Left rail</button>
+                <button type="button" data-layout="single" aria-pressed="false">Single</button>
+            </div>
+        </div>
+
+        <div class="desktop">
+            <div class="app-window">
+                <div class="window-bar" aria-hidden="true">
+                    <span class="win-icon">F</span>
+                    <span class="win-title" id="window-title">Frontline &middot; Dispatch</span>
+                    <span class="win-badge">DEMO</span>
+                    <span class="win-controls"><i></i><i></i><i></i></span>
+                </div>
+                <div class="panes right" id="panes">
+                    <div class="pane main">
+                        <img id="main-image" src="demo/shots/model-app-sample.png" alt="Microsoft Power Apps model-driven dashboard titled Innovation Challenge, with a left navigation rail, pie and bar charts, and a timeline.">
+                    </div>
+                    <div class="pane side">
+                        <img id="side-image" src="demo/shots/teams-recap.png" alt="Microsoft Teams intelligent recap showing meeting video tiles, an AI summary, meeting notes, and a speaker timeline." style="object-position: 0% top;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="taskbar" aria-hidden="true">
+                <span class="start-mark"><i></i><i></i><i></i><i></i></span>
+                <span class="task-search">Search</span>
+                <span class="task-app pa active">PA</span>
+                <span class="task-app teams">T</span>
+                <span class="task-app crm">D</span>
+                <span class="task-app phone">P</span>
+                <span class="task-clock"><b>9:41</b>10/25/2026</span>
+            </div>
+        </div>
+
+        <div class="stage-meta" aria-live="polite">
+            <p><strong id="scene-name">Dispatch.</strong> <span id="scene-copy">The work board stays in front while the crew keeps the meeting recap one glance away.</span></p>
+            <span class="stage-spec" id="scene-spec">Power Apps + Teams &middot; dual &middot; right rail</span>
+        </div>
+        <p class="stage-attribution">Reference screenshots, not live tenant data. <a href="#credits">Sources</a>.</p>
+    </div>
+</section>
+
 <section aria-labelledby="flow">
-    <h2 id="flow">From template to installer</h2>
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">The flow</span>
+            <h2 id="flow">From template to installer</h2>
+        </div>
+        <p>No local toolchain. The first push is the build trigger; the fallback is one button.</p>
+    </div>
     <div class="steps">
         <div class="step">
             <span class="n">1</span>
@@ -243,24 +563,41 @@ footer .connect strong { color: var(--ink); }
 </section>
 
 <section aria-labelledby="agent">
-    <h2 id="agent">Let an agent set it up</h2>
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Agent handoff</span>
+            <h2 id="agent">Let an agent do the copy and config.</h2>
+        </div>
+        <p>Paste this into a coding agent. It reads the maintainer guide, asks for your apps, and walks
+            you through the first build.</p>
+    </div>
     <div class="agent-box">
-        <p>Paste this into your coding agent. It handles the copy, the config, and the first build; you
-            answer the questions about your apps.</p>
 <pre class="prompt"><code>Copy the open-source template at https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell and help me turn it into a Windows desktop shell for my web apps. Read agents.md and config.json first. Ask me for the window title, the one or two app URLs, the domains they need, the sidebar side and width, and whether I want kiosk mode. Then update config.json and walk me through committing so GitHub Actions builds my MSI and NSIS. If no build starts, use Run workflow in Actions.</code></pre>
     </div>
 </section>
 
 <section aria-labelledby="demo">
-    <h2 id="demo">See it before you copy it</h2>
+    <div class="section-head">
+        <div>
+            <span class="eyebrow">Try the build</span>
+            <h2 id="demo">Install the demo profile</h2>
+        </div>
+        <p>An unsigned Windows build that opens the dispatch pairing. It works without a tenant,
+            an account, or a login.</p>
+    </div>
     <div class="demo-box">
-        <p><strong>The demo is a real Windows build, not a mockup.</strong> It wraps two static reference
-            pages so it runs without a Power Apps tenant: a Power Apps model-driven dashboard and a
-            Microsoft Teams recap. Download the unsigned demo installer, or open the
-            <a href="demo/">browser preview</a> first.</p>
-        <p><a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest">Download the demo installer</a>
-            &middot; <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/config.demo.json">See the demo config</a>
-            &middot; <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/actions/workflows/release.yml">Latest build</a></p>
+        <p><strong>The installer is a real Tauri build, not a mockup.</strong> The demo profile embeds
+            the Power Apps dashboard and Teams recap shown above, so you can judge the window,
+            the dual-pane resize, and the supervisor exit on Windows.</p>
+        <p>Use <strong>Ctrl+Shift+Q</strong> to quit, including in kiosk mode. SmartScreen may warn
+            because the build is not code-signed.</p>
+        <div class="demo-actions">
+            <a class="btn btn-primary" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest">Download demo installer</a>
+            <a class="btn btn-secondary" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/config.demo.json">See the demo config</a>
+            <a class="btn btn-secondary" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/actions/workflows/release.yml">Latest build</a>
+        </div>
+        <p class="micro">The demo uses the first pairing. The field and sales pairings are layout
+            references on this page; point <code>config.json</code> at your own URLs to ship either one.</p>
     </div>
 </section>
 </main>
@@ -281,8 +618,120 @@ footer .connect strong { color: var(--ink); }
         <a href="agents.md">agents.md</a> &middot;
         <a href="history.md">history.md</a> &middot;
         <a href="todo.md">todo.md</a></p>
+    <p class="refs" id="credits"><strong>Reference screenshots:</strong>
+        <a href="https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/model-driven-app-overview" rel="noopener">Power Apps model-driven app</a>,
+        <a href="https://learn.microsoft.com/en-us/microsoftteams/intelligent-recap-calls-meetings" rel="noopener">Teams intelligent recap</a>,
+        <a href="https://support.microsoft.com/en-us/teams/calls-devices/use-the-dial-pad-to-make-a-call-in-microsoft-teams" rel="noopener">Teams dial pad</a>,
+        <a href="https://learn.microsoft.com/en-us/dynamics365/sales/user-guide-learn-basics" rel="noopener">Dynamics 365 Sales</a>, and
+        <a href="https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/working-with-forms" rel="noopener">Power Apps canvas forms</a>.
+        Product UI &copy; Microsoft. Used only to show the shell's pane proportions; this template is
+        not affiliated with Microsoft.</p>
 </footer>
 
 </div>
+<script>
+(function () {
+    var scenes = {
+        dispatch: {
+            title: "Frontline \u00b7 Dispatch",
+            name: "Dispatch.",
+            copy: "The work board stays in front while the crew keeps the meeting recap one glance away.",
+            spec: "Power Apps + Teams",
+            layout: "right",
+            main: {
+                src: "demo/shots/model-app-sample.png",
+                alt: "Microsoft Power Apps model-driven dashboard titled Innovation Challenge, with a left navigation rail, pie and bar charts, and a timeline.",
+                position: "left top"
+            },
+            side: {
+                src: "demo/shots/teams-recap.png",
+                alt: "Microsoft Teams intelligent recap showing meeting video tiles, an AI summary, meeting notes, and a speaker timeline.",
+                position: "0% top"
+            }
+        },
+        field: {
+            title: "Frontline \u00b7 Field service",
+            name: "Field.",
+            copy: "The technician keeps the work queue open and answers the dispatcher without leaving the app.",
+            spec: "Power Apps + Teams Phone",
+            layout: "left",
+            main: {
+                src: "demo/shots/model-app-sample.png",
+                alt: "Microsoft Power Apps model-driven dashboard with a left navigation rail and open challenge charts.",
+                position: "left top"
+            },
+            side: {
+                src: "demo/shots/voip-dialpad.png",
+                alt: "Microsoft Teams Phone dial pad with a number field, keypad, call button, and recent call history.",
+                position: "0% top"
+            }
+        },
+        sales: {
+            title: "Frontline \u00b7 Sales desk",
+            name: "Sales.",
+            copy: "The account record and the field asset app sit side by side, so the handoff happens in one window.",
+            spec: "Dynamics 365 + Power Apps",
+            layout: "right",
+            main: {
+                src: "demo/shots/crm-customer360.png",
+                alt: "Dynamics 365 Sales account record for Fabrikam, Inc. showing annual revenue, contacts, and a recent activity timeline.",
+                position: "left top"
+            },
+            side: {
+                src: "demo/shots/pa-assets.png",
+                alt: "Power Apps canvas app titled Assets, showing a searchable list of tablets and PCs with owners and asset IDs.",
+                position: "left top"
+            }
+        }
+    };
+    var panes = document.getElementById("panes");
+    var mainImage = document.getElementById("main-image");
+    var sideImage = document.getElementById("side-image");
+    var windowTitle = document.getElementById("window-title");
+    var sceneName = document.getElementById("scene-name");
+    var sceneCopy = document.getElementById("scene-copy");
+    var sceneSpec = document.getElementById("scene-spec");
+    var tabs = document.querySelectorAll("[data-scene]");
+    var layoutButtons = document.querySelectorAll("[data-layout]");
+    var current = "dispatch";
+
+    function renderScene(key) {
+        var scene = scenes[key];
+        if (!scene) { return; }
+        current = key;
+        windowTitle.textContent = scene.title;
+        sceneName.textContent = scene.name;
+        mainImage.src = scene.main.src;
+        mainImage.alt = scene.main.alt;
+        mainImage.style.objectPosition = scene.main.position;
+        sideImage.src = scene.side.src;
+        sideImage.alt = scene.side.alt;
+        sideImage.style.objectPosition = scene.side.position;
+        setLayout(scene.layout);
+        tabs.forEach(function (tab) {
+            tab.setAttribute("aria-selected", tab.getAttribute("data-scene") === key ? "true" : "false");
+        });
+    }
+
+    function setLayout(layout) {
+        panes.className = "panes " + layout;
+        layoutButtons.forEach(function (button) {
+            button.setAttribute("aria-pressed", button.getAttribute("data-layout") === layout ? "true" : "false");
+        });
+        var label = layout === "right" ? "right rail" : layout === "left" ? "left rail" : "single pane";
+        sceneSpec.textContent = scenes[current].spec + " \u00b7 " + (layout === "single" ? label : "dual \u00b7 " + label);
+        sceneCopy.textContent = " " + (layout === "single"
+            ? "One app fills the window when a second pane would only add noise."
+            : scenes[current].copy);
+    }
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () { renderScene(tab.getAttribute("data-scene")); });
+    });
+    layoutButtons.forEach(function (button) {
+        button.addEventListener("click", function () { setLayout(button.getAttribute("data-layout")); });
+    });
+})();
+</script>
 </body>
 </html>

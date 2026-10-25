@@ -3,6 +3,55 @@
 All notable changes, decisions, and build-pipeline findings for the Powerapp Frontline Workspace
 Shell template. Newest first.
 
+## 2026-10-25 — The landing page is the demo
+
+### Shipped
+
+- Removed the separate `demo/index.html` landing page. The root `index.html` now carries the
+  browser demo, so there is one page to review and one URL to publish.
+- Replaced the three same-app layout thumbnails with three actual pairings on a simulated Windows
+  desktop:
+  - **Dispatch:** Power Apps model-driven dashboard + Teams intelligent recap (right rail).
+  - **Field:** Power Apps dashboard + Teams Phone dial pad (left rail).
+  - **Sales:** Dynamics 365 Sales account record + Power Apps canvas asset app (right rail).
+- Added real Microsoft Learn references for the VoIP and CRM panes, plus a cropped real Power Apps
+  canvas screen (`demo/shots/voip-dialpad.png`, `crm-customer360.png`, `pa-assets.png`). The source
+  links are in the page footer.
+- Added a scene switcher and a right/left/single rail control. The simulated desktop includes a
+  window chrome, wallpaper, and taskbar so the pane sizes read at realistic scale. The interaction
+  is a small inline script; no external dependencies.
+- Kept `demo/primary.html`, `demo/secondary.html`, and `demo/demo.css` because the demo-profile
+  installer still loads those two pages. The trimmed stylesheet only contains the reference-page
+  rules.
+- Updated README, `agents.md`, and `todo.md` for the root-page demo and removed the `/demo/` links.
+
+### Verified
+
+- Chromium at 1280 and 390: all three scenes, all three rail positions, the selected tab and the
+  stage copy update together; no page-level horizontal overflow, no console errors, every reference
+  image returns 200.
+- `demo/primary.html` and `demo/secondary.html` still render with the trimmed stylesheet.
+- `config.json` and `config.demo.json` still parse. The demo profile still points at the two
+  `/demo/*.html` pages that remain in the repo.
+
+### Decision notes
+
+1. The demo page is the product page. Keeping a second preview URL meant duplicated copy, duplicate
+   screenshots, and a second place for links to rot. A maker evaluating the template should not have
+   to click through to discover the pairings.
+2. Reference screenshots are labeled, not disguised as tenant data. They are used to show the shell
+   and the pane proportions; the demo profile remains the only runnable artifact.
+3. The page shows more than the demo installer contains. That is intentional: the installer is the
+   dispatch pairing, while the page demonstrates the range of workable pairings without building
+   three separate binaries.
+
+### Not verified in this pass
+
+- The live GitHub Pages deploy of this rewrite. The local page is verified; the push and Pages check
+  happen with the commit that publishes it.
+- Launching the demo installer on Windows. That remains the only place to judge real WebView2 pane
+  placement.
+
 ## 2026-10-25 — Real-app demo, launchable release, and a concurrency fix
 
 ### Shipped

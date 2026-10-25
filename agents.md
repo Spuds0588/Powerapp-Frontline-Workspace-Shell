@@ -26,15 +26,15 @@ If code and this contract disagree, fix the code or record the decision in `hist
 | --- | --- |
 | `config.json` | The only file a maker edits. Tracked in git so CI can embed it. |
 | `config.demo.json` | Test profile pointing at the published `demo/` pages. CI copies it over `config.json` only for a manual `config: demo` run. |
-| `demo/` | Static reference preview: a Power Apps dashboard and Teams recap, plus a layout-options page. No JavaScript, no build step. |
-| `demo/shots/` | Two Microsoft Learn reference screenshots. Attribution is in `demo/index.html`; they are not live tenant data. |
+| `demo/` | The two static reference pages the demo-profile installer loads. The landing page is the browser demo. |
+| `demo/shots/` | Five labeled Microsoft Learn reference screenshots. Attribution is in `index.html` and the demo pages; they are not live tenant data. |
 | `src-tauri/src/main.rs` | Window, child webviews, layout, allowlist, kiosk, exit shortcut. |
 | `src-tauri/src/config.rs` | The config schema, shared by `main.rs` and `build.rs` so it cannot drift. |
 | `src-tauri/build.rs` | Parses `config.json` at compile time, then runs `tauri_build::build()`. |
 | `src-tauri/Cargo.toml` | `tauri` (`unstable` for child webviews), `serde`, `serde_json`, `url`, and the global-shortcut plugin. |
 | `src-tauri/tauri.conf.json` | Product metadata, `frontendDist: ../ui`, MSI + NSIS bundles. |
 | `ui/index.html` | Packaged dark splash asset. The bare-window shell is covered by its remote child views, so this is not mounted. |
-| `index.html` | Minimal published front door, real-app preview, and the copyable agent prompt. |
+| `index.html` | Published front door, simulated desktop with three reference pairings, and the copyable agent prompt. |
 | `.github/workflows/release.yml` | Windows installer build on push to `main` and manual dispatch. |
 
 ## Commands
@@ -69,13 +69,15 @@ only a fast syntax/type gate. There is no npm project and no frontend build step
    subdomains. An empty list means allow-all; document it, don't silently change it.
 6. **Diagnostics to stdout** with stable prefixes: `[INIT]`, `[CONFIG]`, `[SECURITY]`, `[LAYOUT]`,
    `[FATAL]`.
-7. **Pages stays static and dependency-free.** `index.html` and `demo/` are plain HTML/CSS with no
-   JavaScript, backend, or build step. They must work from the legacy `main` / root Pages source.
+7. **Pages stays static and dependency-free.** `index.html` and `demo/` are plain HTML/CSS plus a
+   small inline scene switcher, with no backend, external script, font, or build step. They must
+   work from the legacy `main` / root Pages source.
 8. **Don't add a Pages workflow.** Pages is already enabled with the legacy `main` / root source.
    Adding an Actions-based Pages deploy would require switching the source and is unnecessary work.
 9. **Full files.** When generating or replacing code, write complete runnable files.
-10. **Demo references are labeled.** `demo/` uses Microsoft Learn screenshots only to show pane
-    proportions. Keep the reference tag and attribution; never claim they are live tenant data.
+10. **Demo references are labeled.** `index.html` and `demo/` use Microsoft Learn screenshots only
+    to show the shell and pane proportions. Keep the attribution; never claim they are live tenant
+    data.
 11. **Windows is the only supported target.** Linux and macOS research is in `history.md`. Do not add
     a build matrix or claim cross-platform support without a product decision and a runtime test.
 
@@ -127,5 +129,5 @@ root window, not injected into the remote page.
 ## Cleanup after builds
 
 Remove `src-tauri/target/` after local compile checks; it is hundreds of MB and git-ignored. Do not
-leave downloaded CI artifacts, test screenshots, or logs in the workspace. Keep the two tracked
+leave downloaded CI artifacts, test screenshots, or logs in the workspace. Keep the five tracked
 `demo/shots/` references. Finish with `git status` and a `du -sh` sanity check.
