@@ -185,7 +185,8 @@ footer .small { color: var(--faint); }
             <a class="btn btn-primary" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/generate">Use this template</a>
             <a class="btn btn-secondary" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/actions/workflows/release.yml">See the latest build &rarr;</a>
         </div>
-        <p class="micro">Configuration is compiled into the .exe. No Rust install, no config file on the endpoint.</p>
+        <p class="micro">Configuration is compiled into the .exe. No Rust install, no config file on the endpoint.<br>
+            <a href="demo/">Preview the demo profile</a> &mdash; two placeholder panes, no tenant needed.</p>
     </div>
 
     <div class="mock" aria-hidden="true">
@@ -246,7 +247,7 @@ footer .small { color: var(--faint); }
         <div class="step"><p><strong>Download the artifact.</strong> In the latest green run, download <code>FrontlineShell-Windows-Installer</code> and run the <code>.msi</code> or <code>-setup.exe</code>.</p></div>
     </div>
     <div class="callout">
-        <p><strong>Installers are artifacts, not releases.</strong> This template does not publish a GitHub Release. The public run linked above is the default config; your copy builds your own. A cold copy builds in about six minutes; later builds are faster.</p>
+        <p><strong>Installers are artifacts, not releases.</strong> This template does not publish a GitHub Release. The public run linked above is the default config; your copy builds your own. A cold copy builds in about six minutes; later builds are faster. To test the shell without a tenant, run the workflow with <code>config: demo</code>; it embeds the <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/config.demo.json">demo profile</a> and the same artifact name.</p>
     </div>
 </section>
 

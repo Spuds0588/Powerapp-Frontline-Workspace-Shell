@@ -5,6 +5,7 @@ compiled into the binary, so the endpoint gets one `.msi` or `.exe` with no loos
 GitHub Actions builds both installers from a copied template.
 
 [Template page](https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/) &middot;
+[Demo preview](https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/demo/) &middot;
 [Download the latest build](https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/actions/workflows/release.yml) &middot;
 [Product spec](PRD-Powerapp%20Frontline%20Workplace%20Shell.md)
 
@@ -19,6 +20,19 @@ GitHub Actions builds both installers from a copied template.
    `-setup.exe`.
 
 Installers are build artifacts, not releases. Nothing is published to the Releases page.
+
+## Demo build
+
+`demo/` is a static placeholder for a frontline Power App. `config.demo.json` points the shell at
+those two published pages. Use it to test the template without a Power Apps tenant.
+
+1. Open **Actions → Build Enterprise Desktop Shell → Run workflow**.
+2. Set **Configuration to embed** to `demo` and run it.
+3. Download the same `FrontlineShell-Windows-Installer` artifact. The window title is
+   **Frontline Demo Console**.
+
+The demo build is a test profile, not the shipped default. `config.json` still points at Power Apps
+and Teams; CI copies `config.demo.json` over it only for a manual `config: demo` run.
 
 ## Configure
 

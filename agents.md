@@ -16,6 +16,8 @@ copies it, edits `config.json`, pushes, and GitHub Actions produces the `.msi` /
 | Path | Purpose |
 | --- | --- |
 | `config.json` | The only file a maker edits. Tracked in git so CI can embed it. |
+| `config.demo.json` | Test profile pointing at the published `demo/` pages. CI copies it over `config.json` only for a manual `config: demo` run. |
+| `demo/` | Static placeholder Power App (dispatch board, chat, framed preview). No JavaScript, no build step. |
 | `src-tauri/src/main.rs` | Window, child webviews, layout, allowlist, kiosk, exit shortcut. |
 | `src-tauri/src/config.rs` | The config schema, shared by `main.rs` and `build.rs` so it cannot drift. |
 | `src-tauri/build.rs` | Parses `config.json` at compile time, then runs `tauri_build::build()`. |
@@ -33,7 +35,8 @@ cargo fmt --manifest-path src-tauri/Cargo.toml      # formatting
 python3 -m json.tool config.json                   # config syntax
 python3 -c "import yaml,sys; yaml.safe_load(open('.github/workflows/release.yml'))"  # workflow syntax
 python3 -m http.server 8080                        # inspect the Pages page locally
-gh workflow run release.yml && gh run watch        # CI run (after push)
+gh workflow run release.yml && gh run watch        # production CI run (after push)
+gh workflow run release.yml -f config=demo        # demo-profile CI run
 gh run download <run-id> -n FrontlineShell-Windows-Installer
 ```
 
@@ -61,6 +64,8 @@ only a fast syntax/type gate. There is no npm project and no frontend build step
    will serve the new root `index.html`. Adding an Actions-based Pages deploy would require switching
    the source and is unnecessary work.
 9. **Full files.** When generating or replacing code, write complete runnable files.
+10. **Demo stays static and separate.** `demo/` is a placeholder, not a product feature. Keep it
+    dependency-free and never make `config.demo.json` the default `config.json`.
 
 ## Template-copy flow (the distribution model)
 
@@ -69,7 +74,9 @@ only a fast syntax/type gate. There is no npm project and no frontend build step
 3. Commit. That push is what starts `release.yml`; a repo copied from a template has no reliable
    "repository created" event, and the initial copy commit may not emit a workflow-triggering push.
    If no run appears, use **Actions → Build Enterprise Desktop Shell → Run workflow**.
-4. Download the `FrontlineShell-Windows-Installer` artifact and install.
+4. To test without a tenant, dispatch again with `config: demo`. That embeds `config.demo.json`,
+   which points at this repo's published Pages demo, and produces the same installer artifact.
+5. Download the `FrontlineShell-Windows-Installer` artifact and install.
 
 Never git-ignore `config.json`. (The sister Electron template ignores its config because the app
 reads it at runtime; this template embeds it, so it must be committed.)
@@ -81,6 +88,8 @@ reads it at runtime; this template embeds it, so it must be committed.)
 | Any Rust | `cargo fmt --check`, `cargo check --manifest-path src-tauri/Cargo.toml` |
 | `config.json` | `python3 -m json.tool`; a compile must fail on invalid JSON (build.rs enforces it) |
 | Workflow | YAML parse, then a real dispatched run; inspect logs, artifact names, and job wall time |
+| Workflow `config` input | Dispatch with `demo`; confirm the embedded title is `Frontline Demo Console` and installers exist |
+| `demo/` / `config.demo.json` | `python3 -m json.tool`; serve locally; check the live Pages URLs |
 | `index.html` / README | Serve locally, exercise the page in a browser, then check the live Pages URL |
 | Shell behavior | Run on Windows and confirm pane layout, blocked navigation log, kiosk, `Ctrl+Shift+Q` |
 

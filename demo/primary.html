@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dispatch board — Frontline Ops</title>
+<meta name="description" content="Placeholder operations dashboard used to demonstrate the Powerapp Frontline Workspace Shell.">
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+<div class="shell">
+    <aside class="rail">
+        <div class="brand">
+            <span class="brand-mark">FO</span>
+            <span>
+                <span class="brand-name">FRONTLINE</span><br>
+                <span class="brand-sub">OPS CONSOLE</span>
+            </span>
+        </div>
+        <span class="eyebrow nav-label">Workspace</span>
+        <nav class="nav" aria-label="Workspace">
+            <span class="nav-item active"><span class="ico">01</span>Dispatch</span>
+            <span class="nav-item"><span class="ico">02</span>Work orders</span>
+            <span class="nav-item"><span class="ico">03</span>Assets</span>
+            <span class="nav-item"><span class="ico">04</span>Safety</span>
+            <span class="nav-item"><span class="ico">05</span>Reports</span>
+        </nav>
+        <span class="eyebrow nav-label">Shift</span>
+        <nav class="nav" aria-label="Shift">
+            <span class="nav-item"><span class="ico">06</span>Handoff notes</span>
+            <span class="nav-item"><span class="ico">07</span>Escalations</span>
+        </nav>
+        <div class="rail-foot">
+            <div class="shift"><span class="shift-dot"></span>Shift B &middot; 06:00–14:00</div>
+            <p class="faint">West Valley &middot; 18 on shift</p>
+        </div>
+    </aside>
+
+    <div class="workspace">
+        <header class="topbar">
+            <span class="crumb">Operations / <strong>Dispatch</strong></span>
+            <span class="top-search"><span>&#8981;</span>Search work orders</span>
+            <span class="avatar" title="Signed in as M. Alvarez">MA</span>
+        </header>
+
+        <main class="content">
+            <div class="page-head">
+                <div>
+                    <h1>Dispatch board</h1>
+                    <p>Tuesday, 25 October &middot; updated 09:42 &middot; West Valley</p>
+                </div>
+                <div class="page-actions">
+                    <span class="btn ghost">Export</span>
+                    <span class="btn primary">+ New order</span>
+                </div>
+            </div>
+
+            <section class="metrics" aria-label="Shift metrics">
+                <div class="metric">
+                    <div class="label">Open orders</div>
+                    <div class="value">24</div>
+                    <div class="delta up">3 added this shift</div>
+                </div>
+                <div class="metric">
+                    <div class="label">SLA at risk</div>
+                    <div class="value">03</div>
+                    <div class="delta up">Needs dispatch</div>
+                </div>
+                <div class="metric">
+                    <div class="label">Techs on shift</div>
+                    <div class="value">18</div>
+                    <div class="delta good">14 available</div>
+                </div>
+                <div class="metric">
+                    <div class="label">Median response</div>
+                    <div class="value">6m 12s</div>
+                    <div class="delta good">- 48s vs. yesterday</div>
+                </div>
+            </section>
+
+            <div class="columns">
+                <section class="card" aria-labelledby="orders">
+                    <div class="card-head">
+                        <h2 id="orders">Open work orders</h2>
+                        <span class="count">24</span>
+                        <span class="more">Priority first &darr;</span>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Site</th>
+                                <th>Status</th>
+                                <th>Due</th>
+                                <th>Owner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="id mono">WO-4821</span><div class="title">Transformer inspection</div><div class="sub">Electrical &middot; P2</div></td>
+                                <td>Site 14<div class="sub">North yard</div></td>
+                                <td><span class="chip progress">In progress</span></td>
+                                <td>Today 09:30<div class="sub">12m over</div></td>
+                                <td><span class="owner"><span class="owner-dot">MA</span>M. Alvarez</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="id mono">WO-4819</span><div class="title">Conveyor jam &mdash; Line 3</div><div class="sub">Mechanical &middot; P1</div></td>
+                                <td>Site 07<div class="sub">Packaging</div></td>
+                                <td><span class="chip blocked">Blocked</span></td>
+                                <td>Today 10:05<div class="sub">22m left</div></td>
+                                <td><span class="owner"><span class="owner-dot">JC</span>J. Chen</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="id mono">WO-4816</span><div class="title">Quarterly HVAC check</div><div class="sub">Facilities &middot; P3</div></td>
+                                <td>Site 02<div class="sub">Admin block</div></td>
+                                <td><span class="chip scheduled">Scheduled</span></td>
+                                <td>Today 11:00<div class="sub">On plan</div></td>
+                                <td><span class="owner"><span class="owner-dot">RP</span>R. Patel</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="id mono">WO-4812</span><div class="title">Forklift battery swap</div><div class="sub">Fleet &middot; P2</div></td>
+                                <td>Site 11<div class="sub">Dock B</div></td>
+                                <td><span class="chip progress">In progress</span></td>
+                                <td>Today 12:20<div class="sub">48m left</div></td>
+                                <td><span class="owner"><span class="owner-dot">TB</span>T. Brooks</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="id mono">WO-4808</span><div class="title">Safety walk &mdash; Dock B</div><div class="sub">Compliance &middot; P3</div></td>
+                                <td>Site 11<div class="sub">Loading</div></td>
+                                <td><span class="chip done">Complete</span></td>
+                                <td>Yesterday<div class="sub">Filed 16:40</div></td>
+                                <td><span class="owner"><span class="owner-dot">AS</span>A. Singh</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <div class="stack">
+                    <section class="card" aria-labelledby="watch">
+                        <div class="card-head">
+                            <h2 id="watch">SLA watch</h2>
+                            <span class="count">3</span>
+                        </div>
+                        <div class="watch-list">
+                            <div class="watch">
+                                <div class="watch-top"><strong>Line 3 conveyor</strong><span class="time">22m</span></div>
+                                <p>Waiting on parts &middot; WO-4819</p>
+                                <div class="track"><span class="bad" style="width:78%"></span></div>
+                            </div>
+                            <div class="watch">
+                                <div class="watch-top"><strong>Transformer 14</strong><span class="time">12m</span></div>
+                                <p>Inspection running late &middot; WO-4821</p>
+                                <div class="track"><span class="bad" style="width:64%"></span></div>
+                            </div>
+                            <div class="watch">
+                                <div class="watch-top"><strong>Dock door 3</strong><span class="time">41m</span></div>
+                                <p>Assigned to R. Patel &middot; WO-4824</p>
+                                <div class="track"><span style="width:46%"></span></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card" aria-labelledby="notes">
+                        <div class="card-head"><h2 id="notes">Shift note</h2><span class="more">09:18</span></div>
+                        <div class="note">
+                            <strong>Parts delivery delayed to 10:30.</strong> Hold Line 3 until the bearing kit arrives; reassign the dock walk if the truck slips again.
+                            <span class="who">D. Okafor &middot; shift lead</span>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

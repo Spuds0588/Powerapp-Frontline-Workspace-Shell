@@ -4,6 +4,15 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      config:
+        description: Configuration to embed
+        required: true
+        default: production
+        type: choice
+        options:
+          - production
+          - demo
 
 permissions:
   contents: read
@@ -20,6 +29,11 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Use demo configuration
+        if: github.event.inputs.config == 'demo'
+        shell: bash
+        run: cp config.demo.json config.json
 
       - name: Set up Node
         uses: actions/setup-node@v4

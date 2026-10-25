@@ -62,6 +62,19 @@ checked only when implemented and, where possible, verified in this repo.
 - [x] Clean `src-tauri/target/`, CI artifacts, screenshots, logs; `git status` clean except intended
       commits.
 
+## Phase 6 — Demo profile and CI build test
+
+- [ ] Add static `demo/` pages (dispatch board, dispatch chat, framed preview) and `config.demo.json`.
+- [ ] Add a `config` choice (`production` / `demo`) to `workflow_dispatch`; demo copies the test
+      profile into `config.json` before the build.
+- [ ] Update README, `agents.md`, and the Pages front door for the demo flow.
+- [ ] Confirm Pages publishes `/demo/` and both pane pages return 200.
+- [ ] Dispatch `config: demo`, watch the Windows run, and fix any failure.
+- [ ] Download the demo artifact and confirm both installers exist.
+- [ ] Load the live demo pages in the shell on this Linux host; confirm both navigations are allowed
+      and the allowlist still blocks an off-domain URL (GTK stacking is the known limitation).
+- [ ] Record the demo run and findings in `history.md`.
+
 ## Playtest evidence
 
 - [x] Run the debug shell on X11 against local pages: window creation, both pane loads, allowlist

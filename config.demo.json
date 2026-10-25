@@ -1,0 +1,24 @@
+{
+  "title": "Frontline Demo Console",
+  "kioskMode": false,
+  "fullscreen": false,
+  "windowWidth": 1440.0,
+  "windowHeight": 900.0,
+  "disableContextMenu": true,
+  "allowedDomains": [
+    "spuds0588.github.io"
+  ],
+  "layout": {
+    "mode": "dual",
+    "sidebarPosition": "right",
+    "sidebarWidth": 420.0
+  },
+  "panes": {
+    "primary": {
+      "url": "https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/demo/primary.html"
+    },
+    "secondary": {
+      "url": "https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/demo/secondary.html"
+    }
+  }
+}
