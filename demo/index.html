@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Frontline Workspace Shell — demo profile</title>
-<meta name="description" content="A browser preview of the placeholder Power App used to test the Frontline Workspace Shell template.">
+<meta name="description" content="See a Power Apps dashboard and Microsoft Teams side by side in the Frontline Workspace Shell demo, then download the Windows installer built by GitHub Actions.">
 <link rel="stylesheet" href="demo.css">
 </head>
-<body class="preview-page">
-<header class="preview-bar">
+<body class="demo-page">
+<header class="demo-bar">
     <div class="brand">
         <span class="brand-mark">FO</span>
         <span>
@@ -16,17 +16,120 @@
             <span class="brand-sub">WORKSPACE SHELL</span>
         </span>
     </div>
-    <span class="preview-pill">Demo profile</span>
-    <div class="preview-links">
-        <a href="primary.html">Primary pane</a>
-        <a href="secondary.html">Secondary pane</a>
-        <a href="../index.html">Template page</a>
-    </div>
+    <span class="demo-pill">Demo profile</span>
+    <nav class="demo-nav" aria-label="Demo links">
+        <a href="../">Template</a>
+        <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/config.demo.json">Config</a>
+        <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/README.md">README</a>
+    </nav>
 </header>
-<main class="preview-frame">
-    <div class="preview-primary"><iframe src="primary.html" title="Demo primary pane: dispatch board"></iframe></div>
-    <div class="preview-secondary"><iframe src="secondary.html" title="Demo secondary pane: dispatch channel"></iframe></div>
+
+<main class="demo-main">
+    <section class="demo-intro">
+        <div>
+            <h1>Two real apps. One window.</h1>
+            <p class="lede">A <strong>Power Apps model-driven dashboard</strong> beside a
+                <strong>Microsoft Teams recap</strong>, in the same dual-pane shell. The screenshots are
+                references, not live tenant data; the demo installer opens these two pages in two native
+                webviews.</p>
+        </div>
+        <div class="actions">
+            <a class="btn primary" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest">Download demo installer</a>
+            <a class="btn" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/config.demo.json">View config</a>
+        </div>
+    </section>
+
+    <section class="desktop" aria-label="Browser preview of the dual-pane demo">
+        <div class="desktop-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="desktop-title">Frontline Demo Console</span>
+            <span class="desktop-meta">dual &middot; right rail &middot; 420 px</span>
+        </div>
+        <div class="desktop-body">
+            <iframe src="primary.html" title="Primary pane: Power Apps reference dashboard" loading="lazy"></iframe>
+            <iframe src="secondary.html" title="Secondary pane: Microsoft Teams reference recap" loading="lazy"></iframe>
+        </div>
+    </section>
+    <p class="desktop-note">Browser preview &middot; the Windows installer runs the same pages in native
+        child webviews. <strong>Ctrl+Shift+Q</strong> is the supervisor exit, including kiosk mode.
+        The demo installer is unsigned, so SmartScreen may warn.</p>
+
+    <h2>What you can change</h2>
+    <p>Three layout examples from the same two apps. The shipping demo uses the first one.</p>
+    <div class="options">
+        <article class="option">
+            <div class="mini" aria-hidden="true">
+                <img class="main" src="shots/model-app-sample.png" alt="">
+                <img class="side" src="shots/teams-recap.png" alt="">
+            </div>
+            <div>
+                <h3>Dual &middot; right rail</h3>
+                <p>Default. Main app plus a 420 px sidebar on the right.</p>
+            </div>
+        </article>
+        <article class="option">
+            <div class="mini left" aria-hidden="true">
+                <img class="main" src="shots/model-app-sample.png" alt="">
+                <img class="side" src="shots/teams-recap.png" alt="">
+            </div>
+            <div>
+                <h3>Dual &middot; left rail</h3>
+                <p>Keep the conversation on the left, the app on the right.</p>
+            </div>
+        </article>
+        <article class="option">
+            <div class="mini single" aria-hidden="true">
+                <img class="main" src="shots/model-app-sample.png" alt="">
+                <img class="side" src="shots/teams-recap.png" alt="">
+            </div>
+            <div>
+                <h3>Single pane</h3>
+                <p>One app fills the window when a sidebar would only add noise.</p>
+            </div>
+        </article>
+    </div>
+
+    <h2>What the demo embeds</h2>
+    <div class="config">
+        <div>
+            <p>The production config points at Power Apps and Teams. This demo config points at the two
+                Pages reference pages, so it works without a tenant, an account, or a network login.</p>
+            <dl>
+                <dt>Window</dt><dd>1440 &times; 900</dd>
+                <dt>Layout</dt><dd>dual, right, 420 px</dd>
+                <dt>Kiosk</dt><dd>off</dd>
+                <dt>Context menu</dt><dd>suppressed</dd>
+                <dt>Allowlist</dt><dd>spuds0588.github.io</dd>
+                <dt>Artifact</dt><dd>MSI + NSIS</dd>
+            </dl>
+        </div>
+<pre><code>"layout": {
+  "mode": "dual",
+  "sidebarPosition": "right",
+  "sidebarWidth": 420
+},
+"kioskMode": false,
+"allowedDomains": ["spuds0588.github.io"],
+"panes": {
+  "primary":   { "url": ".../demo/primary.html" },
+  "secondary": { "url": ".../demo/secondary.html" }
+}</code></pre>
+    </div>
+
+    <footer class="attribution">
+        <p>Reference screenshots: Microsoft Learn,
+            <a href="https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/model-driven-app-overview" rel="noopener">Power Apps model-driven app overview</a>
+            and
+            <a href="https://learn.microsoft.com/en-us/microsoftteams/intelligent-recap-calls-meetings" rel="noopener">Microsoft Teams intelligent recap</a>.
+            Product UI &copy; Microsoft. Used only to show the shell's pane proportions; this template is
+            not affiliated with Microsoft.</p>
+        <div class="demo-footer">
+            <a href="../">Template page</a>
+            <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell">GitHub</a>
+            <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest">Demo release</a>
+            <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/agents.md">Maintainer guide</a>
+        </div>
+    </footer>
 </main>
-<p class="preview-note">Static placeholder &middot; the desktop shell loads these same two pages</p>
 </body>
 </html>

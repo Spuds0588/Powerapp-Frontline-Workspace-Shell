@@ -3,6 +3,113 @@
 All notable changes, decisions, and build-pipeline findings for the Powerapp Frontline Workspace
 Shell template. Newest first.
 
+## 2026-10-25 — Future state: Linux and macOS builds (research only)
+
+**Verdict:** the build pipeline can produce Linux and macOS installers from native GitHub runners, but
+the product cannot be called cross-platform yet. Windows remains the only supported target. No workflow
+or bundle change was made; this is the reusable research for a future decision.
+
+### What a three-OS build would take
+
+Use a native matrix, not cross-compilation. Tauri needs the host OS SDK and WebView engine, and macOS
+cannot be legally built from Linux. A minimal matrix is `windows-2025`, `ubuntu-24.04`, and
+`macos-15` (Apple Silicon). Add `macos-15-intel` only if Intel Macs are a real requirement. Pin labels
+rather than `*-latest`: GitHub is retiring `ubuntu-22.04` on 17 April 2027 and has already retired
+`macos-13`. `windows-latest` still works today, but pinning `windows-2025` makes the Windows baseline
+explicit.
+
+- **Windows:** unchanged. `tauri build --ci` with `bundle.targets: ["msi", "nsis"]` and the current
+  artifact upload. Keep the existing cache and timeout rules.
+- **Linux:** install `libwebkit2gtk-4.1-dev`, `libgtk-3-dev`, `libayatana-appindicator3-dev` (or
+  `libappindicator3-dev` where that is the available name), `librsvg2-dev`, `libxdo-dev`,
+  `libssl-dev`, `build-essential`, `patchelf`, and `xdg-utils`. Bundle `deb`, `rpm`, and `appimage`
+  through `tauri.linux.conf.json`. Tauri v2 needs WebKitGTK **4.1**, not the old 4.0 package.
+  Tauri recommends building on the oldest distro that provides 4.1 because the build host sets the
+  glibc floor. Ubuntu 22.04 is that old baseline, but it is being retired from Actions; after April
+  2027 either build inside a 22.04 container or accept a newer glibc floor from 24.04.
+- **macOS:** bundle `app` and `dmg` through `tauri.macos.conf.json`. A `.icns` icon is required and is
+  missing from this repo; `tauri icon` can generate the full set from a square PNG. For one universal
+  download, install both Rust targets on an Apple Silicon runner and build
+  `--target universal-apple-darwin`; do not try to install `universal-apple-darwin` as a Rust target.
+  Separate arm64 and x64 builds are simpler but produce two artifacts.
+- **Per-OS config:** Tauri automatically merges `tauri.windows.conf.json`, `tauri.linux.conf.json`,
+  and `tauri.macos.conf.json` into `tauri.conf.json`. That is the clean way to keep Windows-only
+  `msi`/`nsis` targets from breaking a Linux or macOS build.
+- **Artifacts:** rename per OS (`FrontlineShell-Windows-Installer`, `-Linux-Installer`,
+  `-macOS-Installer`) and upload only that OS's bundle paths with `if-no-files-found: error`. The
+  current fixed artifact name would collide in a matrix.
+
+### macOS signing is the real gate
+
+An unsigned `.dmg` from GitHub is quarantined like any internet download. Users get “cannot verify the
+developer” or “cannot check for malicious software”; macOS Sequoia removed the Control-click override,
+so they must use **System Settings → Privacy & Security → Open Anyway**. That is not a clean install.
+
+Public Developer ID distribution needs the paid Apple Developer Program (US$99/year), a **Developer ID
+Application** certificate, and notarization. Tauri’s CI path is:
+
+- Base64 `.p12` in `APPLE_CERTIFICATE`, its export password in `APPLE_CERTIFICATE_PASSWORD`, the
+  identity in `APPLE_SIGNING_IDENTITY`, and a temporary keychain password in `KEYCHAIN_PASSWORD`.
+- Notarization credentials: either `APPLE_ID` + `APPLE_PASSWORD` (app-specific password) +
+  `APPLE_TEAM_ID`, or `APPLE_API_KEY` + `APPLE_API_ISSUER` + `APPLE_API_KEY_PATH` for the App Store
+  Connect key.
+- Import the certificate into a throwaway keychain with `security create-keychain`, `security import`,
+  and `security set-key-partition-list`; delete it in a `trap` on exit.
+
+Hardened runtime is already the Tauri default and is required for notarization. A normal unsandboxed
+WKWebView app does not need a special network entitlement just to load HTTPS; a sandboxed build would
+need `com.apple.security.network.client`. Do not add JIT exceptions unless a signed build proves they
+are needed.
+
+DMG creation on GitHub is the flakiest part: Tauri’s DMG layout uses Finder/AppleScript, and `CI=true`
+passes `--skip-jenkins` to skip that step. `hdiutil: create failed - Resource busy` has appeared
+intermittently on hosted runners. The practical fallback is `--bundles app`, then zip the `.app` (or
+retry the DMG on another runner), rather than killing XProtect or granting broad privileges.
+
+### Linux packaging caveats
+
+Tauri CLI 2.8+ removed the build-time FUSE requirement from its AppImage tooling, but **running** an
+AppImage may still need `libfuse2` (Ubuntu 22.04) or `libfuse2t64` (24.04), or
+`--appimage-extract-and-run`. For build failures, `APPIMAGE_EXTRACT_AND_RUN=1` is the no-FUSE
+fallback; the `unknown type [0x13] section .relr.dyn` strip failure has a separate `NO_STRIP=true`
+workaround. Do not treat either as a universal fix. Media playback needs GStreamer, and
+`bundleMediaFramework` only bundles it on Ubuntu-built AppImages; it is not a Widevine guarantee.
+
+### What blocks this product, beyond CI
+
+1. **The product contract is Windows 10/11.** Shipping Linux or macOS is a product decision, not just
+   a matrix entry. The kiosk and hardware assumptions in the original spec are Windows-shaped.
+2. **Linux dual-pane is still broken upstream.** Tauri places child webviews in a GTK `Box`, so both
+   panes stack; the bounds are ignored. Tauri issue #10420 is open. A Linux build would need a
+   single-pane mode, a GTK `Fixed` workaround maintained in this repo, or a different window strategy.
+   A green Linux build would not make the current dual-pane promise true.
+3. **Wayland has no reliable global shortcut.** Tauri’s global-hotkey backend supports X11 only; the
+   XDG GlobalShortcuts portal exists, but the plugin does not use it. `Ctrl+Shift+Q` is the kiosk
+   escape hatch, so shipping Linux without a working exit is dangerous. X11-only is an option, but
+   many current desktops default to Wayland.
+4. **macOS kiosk is not Windows kiosk.** Fullscreen plus `decorations(false)` is presentation, not
+   OS lockdown. macOS still exposes the menu bar, Dock, app switching, `Cmd+Q`, and fullscreen escape
+   gestures. Real single-app mode needs MDM (Autonomous Single App Mode) and device management. Test
+   whether the global shortcut is delivered in native fullscreen before relying on it as the only exit.
+5. **WKWebView may not be enough for Power Apps SSO.** WebKit’s ITP blocks third-party cookies by
+   default; Microsoft documents third-party-cookie failures for embedded Power Apps and recommends
+   interactive popup/full-page fallbacks. `WKWebView` also does not share Safari’s cookie jar. This
+   needs a real tenant test, not a compile check.
+6. **Assets and metadata are Windows-only.** The repo has `32x32.png`, `128x128.png`, and `icon.ico`,
+   but no `icon.icns` or `128x128@2x.png`. `tauri.conf.json` hard-codes `msi`/`nsis` targets.
+7. **Signing is not solved on any platform.** Windows MSI/NSIS are currently unsigned, so SmartScreen
+   will warn. macOS public distribution needs the Apple setup above. Linux packages are unsigned.
+
+### If this is greenlit later
+
+Do it in this order: add the per-OS configs and icons; add a matrix that keeps the Windows job
+unchanged; make Linux single-pane or fix GTK placement; add macOS signing/notarization and a DMG
+fallback; then test on real Windows, Linux X11, Linux Wayland, and macOS. CI green is not runtime
+proof. The Windows path should stay the required gate until the others have an owner and a support
+statement.
+
+Sources: [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/), [Tauri GitHub pipeline](https://v2.tauri.app/distribute/pipelines/github/), [Tauri config reference](https://v2.tauri.app/reference/config/), [Tauri macOS signing](https://v2.tauri.app/distribute/sign/macos/), [Tauri environment variables](https://v2.tauri.app/reference/environment-variables/), [Tauri AppImage](https://v2.tauri.app/distribute/appimage/), [Tauri CLI target reference](https://v2.tauri.app/reference/cli/), [GitHub-hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners), [Ubuntu 22.04 retirement](https://github.com/actions/runner-images/issues/14254), [Tauri issue #10420](https://github.com/tauri-apps/tauri/issues/10420), [Wayland shortcut issue](https://github.com/tauri-apps/tauri/issues/3578), [Apple Gatekeeper](https://support.apple.com/en-us/102445), [Apple Sequoia change](https://developer.apple.com/news/?id=saqachfa), [GitHub certificate install](https://docs.github.com/en/actions/how-tos/deploy/deploy-to-third-party-platforms/sign-xcode-applications), [Tauri DMG CI issue](https://github.com/tauri-apps/tauri/issues/592), [WKWebView ITP](https://webkit.org/tracking-prevention/), [Power Apps cookie troubleshooting](https://learn.microsoft.com/en-us/troubleshoot/power-platform/power-apps/sign-in/troubleshooting-startup-issues).
+
 ## 2026-10-25 — Demo profile and tenant-free CI build
 
 ### Shipped
@@ -253,13 +360,13 @@ copied template because the checkout directory name changes with the repo.
 - Not exercised: opening a window, navigation blocking against a live URL, kiosk, the shortcut at
   runtime, SSO, installer creation, or memory use. This Linux host has no Windows GUI or MSI path.
 
-### Deviations from the PRD sample, and why
+### Deviations from the original brief's sample, and why
 
 1. **`tauri-plugin-global-shortcut` added.** Tauri v2 has no core global-shortcut API, and FR-03
    requires `Ctrl+Shift+Q`. Registered Rust-side, so no frontend permission or capability is exposed.
    The official plugin requires Rust 1.90+, which is relevant to CI toolchain choice.
 2. **`build.rs` parses the shared `config.rs` schema**, not just JSON syntax. A missing or misspelled
-   required key is now a compile error too, which is stronger than the doc's runtime `expect`.
+   required key is now a compile error too, which is stronger than the brief's runtime `expect`.
 3. **Host comparison lowercases both sides.** DNS hostnames are case-insensitive; the sample's exact
    string compare would reject `Apps.PowerApps.com`.
 4. **Layout clamps so the primary pane keeps at least 200 px**, adds `min_inner_size(640, 400)`, and
@@ -281,10 +388,9 @@ Phase 3: `release.yml`, a real Windows run, and the artifact inspection. Then Pa
 
 ## 2026-10-25 — Mission start: doc audit, repo survey, working contract
 
-### What the master dev doc requires
+### What the original brief requires
 
-The product is a **Tauri v2 Windows desktop shell** (`PRD-Powerapp Frontline Workplace Shell.md`),
-not a web app. Requirements as understood:
+The product is a **Tauri v2 Windows desktop shell**, not a web app. Requirements as understood:
 
 - **FR-01 Compile-time config.** Root `config.json` is embedded with `include_str!`; invalid JSON must
   fail the build, not fail at runtime.
@@ -300,9 +406,10 @@ not a web app. Requirements as understood:
 
 ### What exists in the repo
 
-- `PRD-Powerapp Frontline Workplace Shell.md` — 468 lines. Contains the PRD, implementation guide,
-  developer task list, and most of an `AGENTS.md`. **The file is truncated mid-sentence at Part 4 rule
-  5** ("using c"); there is no missing tail on disk. Parts 1–3 are intact.
+- The original brief — 468 lines. Contained the product requirements, implementation guide,
+  developer task list, and most of an `AGENTS.md`. **It was truncated mid-sentence at Part 4 rule 5**
+  ("using c"); there was no missing tail on disk. Parts 1–3 were intact. It has since been absorbed
+  into `agents.md` and removed from the repo.
 - `README.md` — one paragraph, no quickstart or config reference.
 - `LICENSE` — MIT, Corey Burns, 2026.
 - No app source, no workflow, no icons, no Pages `index.html`, no `.gitignore`.
@@ -333,8 +440,8 @@ current repo settings.
 
 - Root `index.html` is the template's front door: explain "Use this template → edit `config.json` →
   push → download installer" and provide a dependency-free config generator (copy/download). This is
-  the sister-pattern equivalent of their wizard without adding a multi-step app the PRD never asked
-  for.
+  the sister-pattern equivalent of their wizard without adding a multi-step app the original brief
+  never asked for.
 - `config.json` **is tracked**. The sister Electron template ignores it; this template bakes it in at
   compile time, so CI must see it.
 - Add `src-tauri/build.rs` (missing from the doc's tree) both for `tauri_build` and to make invalid
@@ -373,7 +480,7 @@ workflow is exercised; entries are marked **verified** only after an observed ru
 
 ### Open questions
 
-- The PRD says "custom pixel or proportional split boundaries" but the schema only exposes pixel
+- The original brief says "custom pixel or proportional split boundaries" but the schema only exposes pixel
   `sidebarWidth`. Implement pixel (schema is authoritative) and note the gap.
 - The doc's `layout.mode` is a free string; treat anything other than `"dual"` as single, matching the
   sample code.

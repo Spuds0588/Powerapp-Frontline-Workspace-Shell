@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Powerapp Frontline Workspace Shell — Tauri desktop template</title>
-<meta name="description" content="A free, MIT-licensed Tauri v2 template that packages Power Apps, Fabric, Teams, and other approved web tools into one locked-down Windows desktop app. Copy it, edit config.json, commit, and GitHub Actions builds the MSI and NSIS installers.">
+<meta name="description" content="A free, MIT-licensed Tauri v2 template that packages Power Apps, Teams, and other approved web tools into one locked-down Windows desktop app. Copy it, edit config.json, commit, and GitHub Actions builds the installers.">
 <link rel="canonical" href="https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Powerapp Frontline Workspace Shell — Tauri desktop template">
-<meta property="og:description" content="One locked-down Windows window for Power Apps, Fabric, and the rest of the frontline stack. Configure one file; GitHub Actions builds the installers.">
+<meta property="og:description" content="One locked-down Windows window for Power Apps, Teams, and the rest of the frontline stack. Configure one file; GitHub Actions builds the installers.">
 <meta property="og:url" content="https://spuds0588.github.io/Powerapp-Frontline-Workspace-Shell/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0b0f19">
 <meta name="robots" content="index, follow">
 <link rel="icon" type="image/png" href="src-tauri/icons/32x32.png">
@@ -24,7 +24,6 @@
     --muted: #94a3b8;
     --faint: #64748b;
     --accent: #38bdf8;
-    --accent-2: #5964a6;
     --code: #7dd3fc;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,138 +33,156 @@ body {
     color: var(--ink);
     line-height: 1.6;
 }
-.wrap { max-width: 1040px; margin: 0 auto; padding: 64px 24px; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 56px 22px 48px; }
 a { color: var(--code); text-decoration: none; }
 a:hover { text-decoration: underline; }
 a:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+img { display: block; max-width: 100%; }
+code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .9em;
+    background: rgba(255,255,255,.06);
+    border-radius: 5px;
+    padding: 1px 5px;
+    color: var(--code);
+}
 
 .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.12fr) minmax(320px, .88fr);
-    gap: 44px;
+    grid-template-columns: minmax(0, 1.02fr) minmax(320px, .98fr);
+    gap: 40px;
     align-items: center;
-    padding-bottom: 24px;
 }
 .badge {
-    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 1px;
-    text-transform: uppercase; color: var(--accent); border: 1px solid rgba(56,189,248,.35);
-    background: rgba(56,189,248,.08); border-radius: 999px; padding: 6px 14px; margin-bottom: 20px;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(56,189,248,.35);
+    background: rgba(56,189,248,.08);
+    border-radius: 999px;
+    padding: 5px 12px;
+    margin-bottom: 18px;
 }
 h1 {
-    font-size: clamp(32px, 5vw, 46px); line-height: 1.12; font-weight: 800;
-    background: linear-gradient(90deg, #f8fafc, #94a3b8);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 16px;
+    font-size: clamp(32px, 5vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    margin-bottom: 14px;
 }
-.lede { font-size: 18px; color: var(--muted); max-width: 640px; margin-bottom: 28px; }
+.lede { font-size: 16.5px; color: var(--muted); margin-bottom: 24px; }
 .lede strong { color: var(--ink); }
-.cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .btn {
-    display: inline-block; padding: 13px 24px; border-radius: 10px; font-weight: 600;
-    font-size: 15px; text-decoration: none; transition: transform .15s ease, box-shadow .15s ease;
+    display: inline-block;
+    padding: 11px 18px;
+    border-radius: 9px;
+    font-weight: 650;
+    font-size: 14px;
+    text-decoration: none;
 }
-.btn:hover { transform: translateY(-2px); text-decoration: none; }
-.btn-primary {
-    background: linear-gradient(135deg, #2f6fed, #5964a6); color: #fff;
-    box-shadow: 0 4px 18px rgba(47,111,237,.25);
-}
+.btn:hover { transform: translateY(-1px); text-decoration: none; }
+.btn-primary { background: linear-gradient(135deg, #2f6fed, #5964a6); color: #fff; }
 .btn-secondary { background: rgba(255,255,255,.04); color: var(--ink); border: 1px solid var(--border); }
-.micro { font-size: 13px; color: var(--faint); margin-top: 18px; }
+.micro { font-size: 12px; color: var(--faint); margin-top: 14px; }
 
-.mock {
-    border: 1px solid var(--border); border-radius: 16px; background: var(--panel-2);
-    box-shadow: 0 24px 60px rgba(0,0,0,.35); overflow: hidden;
+.window {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--panel-2);
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,.35);
 }
-.mock-bar {
-    display: flex; align-items: center; gap: 6px; padding: 10px 12px;
-    border-bottom: 1px solid var(--border); background: #111827;
+.window-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 12px;
+    background: #111827;
+    border-bottom: 1px solid var(--border);
 }
 .dot { width: 7px; height: 7px; border-radius: 50%; background: #334155; }
-.mock-title {
-    margin-left: auto; font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--faint);
-}
-.mock-body {
-    display: grid; grid-template-columns: 1.55fr .9fr; height: 250px; background: var(--bg);
-}
-.pane { display: flex; flex-direction: column; gap: 10px; padding: 16px; min-width: 0; }
-.pane-side { border-left: 1px solid var(--border); background: #0f172a; }
-.pane-label {
-    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--faint); font-weight: 700;
-}
-.bar { height: 9px; border-radius: 4px; background: #1e293b; }
-.bar.bright { background: #334155; }
-.bar.accent { background: linear-gradient(90deg, var(--accent), var(--accent-2)); width: 40%; }
-.tile { height: 56px; border-radius: 8px; background: #1e293b; border: 1px solid #24314d; }
-.tile.tall { height: 78px; }
+.window-title { margin-left: auto; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.window-body { display: grid; grid-template-columns: 1.65fr .85fr; gap: 1px; height: 280px; background: var(--border); }
+.window-body img { width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+.window-caption { font-size: 11px; color: var(--faint); margin-top: 8px; }
 
-h2 { font-size: 24px; font-weight: 700; margin: 48px 0 14px; color: var(--ink); }
-h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--ink); }
-p { color: var(--muted); margin-bottom: 14px; }
-.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 24px 0; }
-.grid .card:last-child:nth-child(odd) { grid-column: 1 / -1; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
-.card p { margin: 0; font-size: 14px; }
-.card:hover { border-color: #2f4a7a; }
-
-.steps { margin: 24px 0; }
+h2 { font-size: 22px; margin: 42px 0 8px; letter-spacing: -.01em; }
+p { color: var(--muted); margin-bottom: 12px; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
 .step {
-    position: relative; padding: 18px 18px 18px 58px; background: var(--panel);
-    border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
 }
-.step::before {
-    counter-increment: step; content: counter(step);
-    position: absolute; left: 18px; top: 18px; width: 26px; height: 26px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #06121f;
-    font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center;
+.step .n {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, var(--accent), #5964a6);
+    color: #06121f;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 9px;
 }
-.steps { counter-reset: step; }
-.step p { margin: 0; font-size: 14px; }
+.step h3 { font-size: 14px; margin-bottom: 3px; }
+.step p { font-size: 12.5px; color: var(--faint); margin: 0; }
 
-.callout {
-    background: rgba(56,189,248,.05); border: 1px solid rgba(56,189,248,.25);
-    border-radius: 14px; padding: 20px; margin: 24px 0;
+.agent-box {
+    background: var(--panel);
+    border: 1px dashed rgba(56,189,248,.35);
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 14px;
 }
-.callout p { margin: 0; font-size: 14px; }
-.callout strong { color: var(--ink); }
+.agent-box p { font-size: 13px; margin-bottom: 10px; }
+.prompt {
+    background: #060913;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 14px;
+    overflow-x: auto;
+}
+.prompt code {
+    background: none;
+    padding: 0;
+    color: #cbd5e1;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
 
-.split { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 32px; align-items: start; }
-.split > * { min-width: 0; }
-.split h2 { margin-top: 0; }
-code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em;
-    background: rgba(255,255,255,.06); border-radius: 5px; padding: 2px 6px; color: var(--code);
+.demo-box {
+    background: rgba(56,189,248,.05);
+    border: 1px solid rgba(56,189,248,.25);
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 14px;
 }
-pre {
-    background: #060913; border: 1px solid var(--border); border-radius: 14px;
-    padding: 18px; overflow-x: auto; line-height: 1.55; margin: 0;
-}
-pre code {
-    background: none; padding: 0; color: #cbd5e1; font-size: 12.5px; white-space: pre;
-}
-.code-col .micro { margin: 10px 0 0; font-size: 12px; }
+.demo-box p { font-size: 13px; margin-bottom: 10px; }
+.demo-box p:last-child { margin-bottom: 0; }
+.demo-box strong { color: var(--ink); }
 
-footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 13px; }
-footer p { margin-bottom: 6px; }
-footer .connect { font-size: 14px; margin-bottom: 14px; }
-footer .connect strong { color: var(--ink); }
+footer { margin-top: 52px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; }
+footer p { margin-bottom: 5px; font-size: 12px; }
 footer .small { color: var(--faint); }
-.sr-only {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-}
+footer .connect { color: var(--muted); }
+footer .connect strong { color: var(--ink); }
 
-@media (max-width: 860px) {
-    .wrap { padding: 48px 20px; }
-    .hero { grid-template-columns: 1fr; gap: 32px; }
-    .mock-body { height: 220px; }
-    .split { grid-template-columns: 1fr; gap: 8px; }
-    h2 { margin-top: 40px; }
+@media (max-width: 840px) {
+    .wrap { padding: 44px 18px 40px; }
+    .hero { grid-template-columns: 1fr; gap: 28px; }
+    .steps { grid-template-columns: 1fr; }
+    .window-body { height: 220px; }
 }
-@media (max-width: 700px) {
-    .grid { grid-template-columns: 1fr; }
-    .grid .card:last-child:nth-child(odd) { grid-column: auto; }
+@media (max-width: 520px) {
+    .window-body { height: 180px; }
+    .window-title { display: none; }
 }
 </style>
 </head>
@@ -175,136 +192,95 @@ footer .small { color: var(--faint); }
 <header class="hero">
     <div>
         <span class="badge">Tauri v2 &middot; Windows 10/11 &middot; MIT</span>
-        <h1>One locked-down window for the frontline stack</h1>
-        <p class="lede">
-            <strong>Powerapp Frontline Workspace Shell</strong> puts Power Apps, Fabric, Teams, or a
-            second approved web tool side by side in a native Windows app. Configure one file, commit,
-            and GitHub Actions builds the installer.
-        </p>
+        <h1>One window for the frontline web.</h1>
+        <p class="lede"><strong>Powerapp Frontline Workspace Shell</strong> puts Power Apps, Teams, or a
+            second approved web app side by side in a native Windows app. Configure one file, commit, and
+            GitHub Actions builds the installers.</p>
         <div class="cta-row">
             <a class="btn btn-primary" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/generate">Use this template</a>
-            <a class="btn btn-secondary" href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/actions/workflows/release.yml">See the latest build &rarr;</a>
+            <a class="btn btn-secondary" href="demo/">Try the demo &rarr;</a>
         </div>
-        <p class="micro">Configuration is compiled into the .exe. No Rust install, no config file on the endpoint.<br>
-            <a href="demo/">Preview the demo profile</a> &mdash; two placeholder panes, no tenant needed.</p>
+        <p class="micro">No Rust install. No loose config on the endpoint. The demo installer is on
+            <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest">Releases</a>.</p>
     </div>
 
-    <div class="mock" aria-hidden="true">
-        <div class="mock-bar">
-            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-            <span class="mock-title">Frontline Operations Console</span>
-        </div>
-        <div class="mock-body">
-            <div class="pane">
-                <span class="pane-label">Power Apps</span>
-                <div class="bar accent"></div>
-                <div class="bar bright"></div>
-                <div class="bar"></div>
-                <div class="tile tall"></div>
-                <div class="bar"></div>
+    <div>
+        <div class="window" aria-hidden="true">
+            <div class="window-bar">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="window-title">Frontline Demo Console</span>
             </div>
-            <div class="pane pane-side">
-                <span class="pane-label">Teams</span>
-                <div class="tile tall"></div>
-                <div class="bar bright"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
+            <div class="window-body">
+                <img src="demo/shots/model-app-sample.png" alt="">
+                <img src="demo/shots/teams-recap.png" alt="">
             </div>
         </div>
+        <p class="window-caption">Reference layout: Power Apps and Microsoft Teams. Screenshots from
+            Microsoft Learn; not live tenant data.</p>
     </div>
 </header>
 
 <main>
-<section aria-labelledby="what">
-    <h2 id="what">What it does</h2>
-    <div class="grid">
-        <div class="card">
-            <h3>Two panes, one window</h3>
-            <p>Run a Power App beside Teams, a dialer, or a second app. Dock the sidebar left or right, set its width, or use single mode when one pane is enough.</p>
-        </div>
-        <div class="card">
-            <h3>A hard domain boundary</h3>
-            <p>Every navigation is checked against <code>allowedDomains</code>. Apex domains and their subdomains pass; everything else is blocked and logged.</p>
-        </div>
-        <div class="card">
-            <h3>Kiosk when it matters</h3>
-            <p>Borderless fullscreen, no decorations, no resize. The supervisor exit is <code>Ctrl+Shift+Q</code>, registered outside the remote page.</p>
-        </div>
-        <div class="card">
-            <h3>Nothing to install beside it</h3>
-            <p><code>config.json</code> is embedded at build time. Distribute one <code>.msi</code> or <code>.exe</code>; there is no loose config to edit, lose, or tamper with.</p>
-        </div>
-    </div>
-</section>
-
-<section aria-labelledby="install">
-    <h2 id="install">From template to installer</h2>
-    <p>No local Rust or C++ build chain. The Windows runner in GitHub Actions does the packaging.</p>
+<section aria-labelledby="flow">
+    <h2 id="flow">From template to installer</h2>
     <div class="steps">
-        <div class="step"><p><strong>Copy the template.</strong> Use the button above. The new repository is yours, and the workflow comes with it.</p></div>
-        <div class="step"><p><strong>Edit <code>config.json</code>.</strong> Set the title, pane URLs, allowed domains, and layout. Commit the change.</p></div>
-        <div class="step"><p><strong>Let Actions build.</strong> The commit starts <strong>Build Enterprise Desktop Shell</strong>. No run? Open <strong>Actions</strong> in your repository and choose <strong>Run workflow</strong>.</p></div>
-        <div class="step"><p><strong>Download the artifact.</strong> In the latest green run, download <code>FrontlineShell-Windows-Installer</code> and run the <code>.msi</code> or <code>-setup.exe</code>.</p></div>
-    </div>
-    <div class="callout">
-        <p><strong>Installers are artifacts, not releases.</strong> This template does not publish a GitHub Release. The public run linked above is the default config; your copy builds your own. A cold copy builds in about six minutes; later builds are faster. To test the shell without a tenant, run the workflow with <code>config: demo</code>; it embeds the <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/config.demo.json">demo profile</a> and the same artifact name.</p>
+        <div class="step">
+            <span class="n">1</span>
+            <h3>Copy the template</h3>
+            <p>Create your own repository. The Windows build workflow comes with it.</p>
+        </div>
+        <div class="step">
+            <span class="n">2</span>
+            <h3>Edit <code>config.json</code></h3>
+            <p>Set the title, one or two pane URLs, the allowed domains, and the layout.</p>
+        </div>
+        <div class="step">
+            <span class="n">3</span>
+            <h3>Commit</h3>
+            <p>The push builds your MSI and NSIS. If no run appears, use <strong>Actions &rarr; Run workflow</strong>.</p>
+        </div>
     </div>
 </section>
 
-<section class="split" aria-labelledby="config">
-    <div>
-        <h2 id="config">One file to configure</h2>
-        <p><code>config.json</code> is the whole control surface: window size, kiosk mode, the domain boundary, the split, and the two URLs.</p>
-        <p>Invalid JSON fails the build before an installer exists. A missing required key does too, so a typo cannot ship as a broken app.</p>
-        <p class="sr-only">The example below shows a dual-pane configuration with Power Apps and Teams.</p>
+<section aria-labelledby="agent">
+    <h2 id="agent">Let an agent set it up</h2>
+    <div class="agent-box">
+        <p>Paste this into your coding agent. It handles the copy, the config, and the first build; you
+            answer the questions about your apps.</p>
+<pre class="prompt"><code>Copy the open-source template at https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell and help me turn it into a Windows desktop shell for my web apps. Read agents.md and config.json first. Ask me for the window title, the one or two app URLs, the domains they need, the sidebar side and width, and whether I want kiosk mode. Then update config.json and walk me through committing so GitHub Actions builds my MSI and NSIS. If no build starts, use Run workflow in Actions.</code></pre>
     </div>
-<div class="code-col">
-<pre><code>{
-  "title": "Frontline Operations Console",
-  "kioskMode": false,
-  "allowedDomains": [
-    "apps.powerapps.com",
-    "teams.microsoft.com",
-    "login.microsoftonline.com"
-  ],
-  "layout": {
-    "mode": "dual",
-    "sidebarPosition": "right",
-    "sidebarWidth": 460
-  },
-  "panes": {
-    "primary":   { "url": "https://apps.powerapps.com" },
-    "secondary": { "url": "https://teams.microsoft.com" }
-  }
-}</code></pre>
-<p class="micro">Abridged example. The full schema is in the <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/PRD-Powerapp%20Frontline%20Workplace%20Shell.md">product spec</a>.</p>
-</div>
 </section>
 
-<section aria-labelledby="small">
-    <h2 id="small">Deliberately small</h2>
-    <div class="grid">
-        <div class="card">
-            <h3>No scraping or DOM rewriting</h3>
-            <p>The shell orchestrates windows and enforces the boundary. Its only injected script suppresses the context menu; it does not read or alter the hosted page.</p>
-        </div>
-        <div class="card">
-            <h3>No runtime settings</h3>
-            <p>No settings panel, database, updater, or telemetry. Change the config in the repo and build again.</p>
-        </div>
-        <div class="card">
-            <h3>One supported target</h3>
-            <p>Windows 10/11 on WebView2, packaged as MSI and NSIS. Keep the template lean instead of pretending to be cross-platform.</p>
-        </div>
+<section aria-labelledby="demo">
+    <h2 id="demo">See it before you copy it</h2>
+    <div class="demo-box">
+        <p><strong>The demo is a real Windows build, not a mockup.</strong> It wraps two static reference
+            pages so it runs without a Power Apps tenant: a Power Apps model-driven dashboard and a
+            Microsoft Teams recap. Download the unsigned demo installer, or open the
+            <a href="demo/">browser preview</a> first.</p>
+        <p><a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest">Download the demo installer</a>
+            &middot; <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/config.demo.json">See the demo config</a>
+            &middot; <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/actions/workflows/release.yml">Latest build</a></p>
     </div>
 </section>
 </main>
 
 <footer>
-    <p class="connect"><strong>Maintained by Corey Burns.</strong> <a href="https://www.linkedin.com/in/coreytburns/" rel="noopener">LinkedIn</a> &middot; <a href="https://github.com/Spuds0588?tab=repositories" rel="noopener">More tools on GitHub</a></p>
-    <p><strong>Powerapp Frontline Workspace Shell</strong> &middot; MIT License &middot; <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell">GitHub</a> &middot; <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/issues">Issues</a> &middot; <a href="mailto:burnsdevfeedback@gmail.com">burnsdevfeedback@gmail.com</a></p>
-    <p>Sister templates: <a href="https://github.com/Spuds0588/Powerapps-to-electron-template">Power App Electron</a> &middot; <a href="https://github.com/Spuds0588/Powerapp-to-Extension-Template">Power App Extension</a> &middot; <a href="https://github.com/Spuds0588/los-companion-electron-template">LOS Companion</a></p>
-    <p class="small">Maintainer notes: <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/agents.md">agents.md</a> &middot; <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/history.md">history.md</a> &middot; <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/blob/main/PRD-Powerapp%20Frontline%20Workplace%20Shell.md">product spec</a></p>
+    <p class="connect"><strong>Maintained by Corey Burns.</strong>
+        <a href="https://www.linkedin.com/in/coreytburns/" rel="noopener">LinkedIn</a> &middot;
+        <a href="https://github.com/Spuds0588?tab=repositories" rel="noopener">More tools on GitHub</a></p>
+    <p><strong>Powerapp Frontline Workspace Shell</strong> &middot; MIT License &middot;
+        <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell">GitHub</a> &middot;
+        <a href="https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/issues">Issues</a> &middot;
+        <a href="mailto:burnsdevfeedback@gmail.com">burnsdevfeedback@gmail.com</a></p>
+    <p>Sister templates:
+        <a href="https://github.com/Spuds0588/Powerapps-to-electron-template">Power App Electron</a> &middot;
+        <a href="https://github.com/Spuds0588/Powerapp-to-Extension-Template">Power App Extension</a> &middot;
+        <a href="https://github.com/Spuds0588/los-companion-electron-template">LOS Companion</a></p>
+    <p class="small">Maintainer notes:
+        <a href="agents.md">agents.md</a> &middot;
+        <a href="history.md">history.md</a> &middot;
+        <a href="todo.md">todo.md</a></p>
 </footer>
 
 </div>

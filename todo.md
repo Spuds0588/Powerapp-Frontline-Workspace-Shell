@@ -1,33 +1,33 @@
 # TODO
 
-Working checklist for the template. Mirrors the Developer Task List in
-[PRD-Powerapp Frontline Workplace Shell.md](PRD-Powerapp%20Frontline%20Workplace%20Shell.md). Items are
-checked only when implemented and, where possible, verified in this repo.
+Working checklist for the template. Items are checked only when implemented and, where possible,
+verified in this repo.
 
 ## Phase 1 — Repository shape
 
-- [x] Read the master dev doc end to end and survey the repo.
+- [x] Read the original brief end to end and survey the repo.
 - [x] Create `agents.md`, `todo.md`, `history.md`.
 - [x] Add root `config.json` using the documented schema (dual mode, right sidebar, Teams example).
 - [x] Add `.gitignore` (`src-tauri/target/`, generated schemas, logs); keep `config.json` tracked.
 - [x] Add `ui/index.html` splash exactly in the documented low-key style.
+- [x] Absorb the product contract into `agents.md` and remove the original brief from the repo.
 
 ## Phase 2 — Tauri v2 shell
 
 - [x] `src-tauri/Cargo.toml` with `tauri` (`unstable`), `serde`, `serde_json`, `url`, `tauri-build`,
       plus the official global-shortcut plugin required for the exit shortcut.
 - [x] `src-tauri/build.rs` and shared `src-tauri/src/config.rs`: parse `config.json` so invalid JSON
-      fails the compile (FR-01), then `tauri_build::build()`.
+      fails the compile, then `tauri_build::build()`.
 - [x] `src-tauri/tauri.conf.json`: product name, identifier, `frontendDist: ../ui`, MSI + NSIS.
 - [x] Generate committed icons (`32x32.png`, `128x128.png`, `icon.ico`) referenced by the bundle.
 - [x] `src-tauri/src/main.rs`:
   - [x] `include_str!` config and deserialize.
   - [x] Single/dual child webviews with left/right docking and clamped sidebar width.
-  - [x] Recompute both view rectangles on `WindowEvent::Resized` (FR-02).
-  - [x] `on_navigation` allowlist check on both panes with `[SECURITY][BLOCKED]` logging (FR-03).
+  - [x] Recompute both view rectangles on `WindowEvent::Resized`.
+  - [x] `on_navigation` allowlist check on both panes with `[SECURITY][BLOCKED]` logging.
   - [x] Context menu suppression via initialization script.
   - [x] Kiosk / fullscreen window flags.
-  - [x] `Ctrl+Shift+Q` supervisor exit — required by FR-03, missing from the doc's sample code.
+  - [x] `Ctrl+Shift+Q` supervisor exit, registered outside the remote page.
 - [x] `cargo fmt --check` and `cargo check` pass locally; invalid config JSON fails the build.
 
 ## Phase 3 — GitHub Actions installer build
@@ -49,24 +49,29 @@ checked only when implemented and, where possible, verified in this repo.
       config-edit → push → artifact flow, and links to the latest build and source.
 - [x] Match the sister projects' published-site pattern (root `index.html`, no backend); use the
       established blue/ink palette, not a new design system.
-- [x] Verify locally in Chromium: the JSON example parses, no console errors, no page overflow at
-      1280 px or 390 px, and the code block scrolls inside its column.
+- [x] Replace the abstract window mock with the real Power Apps / Teams reference preview.
+- [x] Add the sister-template agent handoff prompt: copy, configure, commit, build.
+- [x] Verify locally in Chromium: no console errors, no page overflow at 1280 px or 390 px.
 - [x] Push, confirm Pages rebuilt, and check the live URL renders (not README).
 - [x] Rewrite `README.md`: quickstart, config reference, CI + template-copy flow, maintainer links.
 
 ## Phase 5 — Handoff
 
 - [x] Repo remains flagged as a template; Actions and Pages enabled.
-- [x] Record unverifiable Sprint 3 checks as manual: install the MSI on clean Windows, confirm
+- [x] Record unverifiable checks as manual: install the MSI on clean Windows, confirm
       zero-dependency operation, measure RSS < 90 MB, confirm blocked-navigation behavior on Windows.
 - [x] Clean `src-tauri/target/`, CI artifacts, screenshots, logs; `git status` clean except intended
       commits.
 
 ## Phase 6 — Demo profile and CI build test
 
-- [x] Add static `demo/` pages (dispatch board, dispatch chat, framed preview) and `config.demo.json`.
+- [x] Add static `demo/` pages and `config.demo.json`.
 - [x] Add a `config` choice (`production` / `demo`) to `workflow_dispatch`; demo copies the test
       profile into `config.json` before the build.
+- [x] Replace the synthetic dispatch board/chat with labeled Microsoft Learn references: a Power Apps
+      model-driven dashboard and a Teams recap.
+- [x] Rebuild `demo/index.html` around the real panes, three layout examples, the embedded config,
+      and a link to the prebuilt demo installer.
 - [x] Update README, `agents.md`, and the Pages front door for the demo flow.
 - [x] Confirm Pages publishes `/demo/` and both pane pages return 200.
 - [x] Dispatch `config: demo`, watch the Windows run, and fix any failure.
@@ -76,6 +81,19 @@ checked only when implemented and, where possible, verified in this repo.
       allowlist block was verified in the earlier local playtest and the code is unchanged (GTK
       stacking remains the known limitation).
 - [x] Record the demo run and findings in `history.md`.
+- [ ] Publish the new demo build as a `demo-latest` release and verify both assets download.
+
+## Phase 7 — Future state (research complete, implementation deferred)
+
+- [x] Research Linux and macOS build requirements, runner labels, bundle targets, macOS
+      signing/notarization, Linux packaging, and the product-level blockers. Recorded in
+      `history.md`.
+- [ ] Implement a per-OS build matrix only after a product decision to support Linux/macOS.
+- [ ] Add `tauri.linux.conf.json` / `tauri.macos.conf.json`, `icon.icns`, and `128x128@2x.png`.
+- [ ] Fix or work around Linux child-webview stacking and Wayland global shortcuts before shipping
+      a Linux kiosk build.
+- [ ] Add macOS Developer ID signing/notarization and a DMG fallback before distributing a macOS
+      build.
 
 ## Playtest evidence
 
