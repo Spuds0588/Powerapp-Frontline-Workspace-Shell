@@ -64,16 +64,18 @@ checked only when implemented and, where possible, verified in this repo.
 
 ## Phase 6 — Demo profile and CI build test
 
-- [ ] Add static `demo/` pages (dispatch board, dispatch chat, framed preview) and `config.demo.json`.
-- [ ] Add a `config` choice (`production` / `demo`) to `workflow_dispatch`; demo copies the test
+- [x] Add static `demo/` pages (dispatch board, dispatch chat, framed preview) and `config.demo.json`.
+- [x] Add a `config` choice (`production` / `demo`) to `workflow_dispatch`; demo copies the test
       profile into `config.json` before the build.
-- [ ] Update README, `agents.md`, and the Pages front door for the demo flow.
-- [ ] Confirm Pages publishes `/demo/` and both pane pages return 200.
-- [ ] Dispatch `config: demo`, watch the Windows run, and fix any failure.
-- [ ] Download the demo artifact and confirm both installers exist.
-- [ ] Load the live demo pages in the shell on this Linux host; confirm both navigations are allowed
-      and the allowlist still blocks an off-domain URL (GTK stacking is the known limitation).
-- [ ] Record the demo run and findings in `history.md`.
+- [x] Update README, `agents.md`, and the Pages front door for the demo flow.
+- [x] Confirm Pages publishes `/demo/` and both pane pages return 200.
+- [x] Dispatch `config: demo`, watch the Windows run, and fix any failure.
+- [x] Download the demo artifact and confirm both installers exist; verify the embedded title and URLs
+      in the extracted app binary, not just the artifact name.
+- [x] Load the live demo pages in the shell on this Linux host; both navigations are allowed. The
+      allowlist block was verified in the earlier local playtest and the code is unchanged (GTK
+      stacking remains the known limitation).
+- [x] Record the demo run and findings in `history.md`.
 
 ## Playtest evidence
 
@@ -84,6 +86,7 @@ checked only when implemented and, where possible, verified in this repo.
 ## Manual / cannot verify in this Linux environment
 
 - [ ] Install and launch the MSI on Windows 10/11.
+- [ ] Launch the demo-profile installer on Windows and confirm dual-pane placement.
 - [ ] Memory measurement in Task Manager under active Power Apps load.
 - [ ] Microsoft Entra ID SSO popup behavior against a live tenant.
 - [ ] Kiosk behavior on a Windows kiosk account.

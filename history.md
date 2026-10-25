@@ -3,6 +3,88 @@
 All notable changes, decisions, and build-pipeline findings for the Powerapp Frontline Workspace
 Shell template. Newest first.
 
+## 2026-10-25 — Demo profile and tenant-free CI build
+
+### Shipped
+
+- `demo/` is a static placeholder for a frontline Power App: a dispatch board (`primary.html`), a
+  dispatch chat (`secondary.html`), a shared stylesheet, and a framed preview at `demo/` that shows
+  both panes side by side. No JavaScript, no dependencies, no build step.
+- `config.demo.json` embeds the demo profile: title `Frontline Demo Console`, 1440x900, 420 px right
+  sidebar, and `allowedDomains: ["spuds0588.github.io"]` with both pane URLs on the published Pages
+  site. It is not the default; `config.json` still points at Power Apps and Teams.
+- `.github/workflows/release.yml` now has a `workflow_dispatch` input, `config`, with `production`
+  (default) and `demo`. The `demo` step copies `config.demo.json` over `config.json` after checkout
+  and before the build. A push always builds production.
+- README, `agents.md`, `todo.md`, and the Pages front door now explain the demo and the manual run.
+
+### Verified
+
+- Local Python parse of all demo HTML, `config.demo.json`, and the workflow YAML; served the root and
+  all demo assets over HTTP (all 200).
+- Chromium at 1280 px and 390 px: both iframes load, frame titles are correct, no console errors, no
+  page-level horizontal overflow. The demo preview scrolls each pane independently.
+- Pages build `40216024166` succeeded in 1m07s from the push of `97b9a89`. Live URLs:
+  `/`, `/demo/`, `/demo/primary.html`, `/demo/secondary.html`, `/demo/demo.css`, and
+  `/config.demo.json` all return 200. Jekyll served the subfolder without a `.nojekyll` or config
+  change.
+- Production build `40216024538` succeeded: 2m23s job, 89s build step, 372 MB cache restored. The
+  `Use demo configuration` step was correctly skipped on the push.
+- Demo build `40216270479` succeeded on the first attempt: 2m17s job, 84s build step, same 372 MB
+  cache. The `Use demo configuration` step ran and the artifact was `FrontlineShell-Windows-Installer`.
+- Downloaded the demo artifact: `FrontlineShell_1.0.0_x64_en-US.msi` (2,985,984 bytes) and
+  `FrontlineShell_1.0.0_x64-setup.exe` (1,946,048 bytes). Extracted the NSIS installer with `7z`; the
+  embedded `frontline-desktop-shell.exe` (8,927,232 bytes) contains
+  `"title": "Frontline Demo Console"` and both `spuds0588.github.io/.../demo/*.html` URLs, and no
+  `Frontline Operations Console` string. This proves the selector embedded the demo profile rather
+  than just naming the run.
+- Built the Linux debug binary with the demo profile and ran it on X11: `[CONFIG][EMBEDDED] Loaded
+  profile: 'Frontline Demo Console' | Mode='dual'`, `[LAYOUT][SYNC] ... 1440x900`, and both
+  `[NAVIGATION][ALLOWED]` lines for the live demo pages. The process stayed alive until the 25s
+  timeout. GTK still stacks the child views; that is the known Linux backend limitation, not a demo
+  problem. The allowlist block was not repeated this pass; the earlier local redirect test and the
+  unchanged `navigation_guard` code cover it.
+
+### Timings
+
+| Run | Trigger | Result | Job | Build step | Cache |
+| --- | --- | --- | --- | --- | --- |
+| 40216024538 | push | success | 2m23s | 89s | 372 MB restored |
+| 40216270479 | dispatch, `config: demo` | success | 2m17s | 84s | 372 MB restored |
+
+Demo-run steps: setup 1s, checkout 5s, demo copy <1s, Node 8s, Rust 12s, cache restore 18s, CLI 2s,
+build 84s, list <1s, upload 1s, post steps 3s.
+
+### Findings for the next template
+
+1. **A `workflow_dispatch` choice plus a copy step is enough for multiple profiles.** No matrix, no
+   separate workflow, no `tauri build --config` flag. `cp config.demo.json config.json` runs in Git
+   Bash on `windows-latest`, and the build uses the normal embedded-config path. It worked first try.
+2. **`github.event.inputs.config` is empty on `push`.** The `if: github.event.inputs.config == 'demo'`
+   step is skipped cleanly. Do not use `inputs.config` in a workflow that also runs on push without
+   checking the event; the event input map is the reliable one.
+3. **The artifact name is fixed across profiles.** `FrontlineShell-Windows-Installer` is the same for
+   production and demo. For this repo that is intentional, but a future template that needs both
+   should name the artifact from the input. Always verify the profile by extracting the app and
+   grepping for a config string, not by trusting the run title or artifact name.
+4. **NSIS installers are directly inspectable with `7z`.** `7z x setup.exe` yields
+   `frontline-desktop-shell.exe`; `strings -a` then shows the embedded `config.json`. This is the
+   cheapest CI artifact proof on Linux and caught nothing only because the selector worked. The MSI
+   is a WiX database and is not as easy to inspect.
+5. **Pages needed no deploy workflow.** The legacy `main` / root source published `demo/` on the
+   normal Pages build. Wait for the `pages build and deployment` run to finish before checking URLs;
+   it took about 1m07s here.
+6. **The earlier fixes held.** `tauri build --ci` with bundle targets in `tauri.conf.json` still
+   avoids the PowerShell `msi,nsis` quoting failure, and the `v1` cache with no
+   `cache-on-failure` still restores in ~18s. No new failure appeared in this pass.
+
+### Not verified
+
+- Installing or launching the demo-profile MSI/NSIS on Windows, including whether the two live Pages
+  panes place correctly under WebView2. Linux still stacks them.
+- The demo is static and does not simulate authentication, Power Apps runtime behavior, or tenant
+  data. It only exercises the shell's URLs, allowlist host, and layout dimensions.
+
 ## 2026-10-25 — First real execution on Linux (playtest)
 
 ### Attempt
