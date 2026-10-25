@@ -46,7 +46,7 @@ jobs:
           tauri --version
 
       - name: Build MSI and NSIS installers
-        run: tauri build --ci --bundles msi,nsis
+        run: tauri build --ci
 
       - name: List installers
         run: Get-ChildItem -Recurse src-tauri/target/release/bundle | Select-Object FullName, Length
