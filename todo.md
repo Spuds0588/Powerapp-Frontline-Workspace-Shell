@@ -117,7 +117,8 @@ verified in this repo.
 - [x] Record the Wine limitation and the reusable Windows-VM procedure in `history.md`.
 - [ ] Exercise off-allowlist navigation on Windows (the demo pages have no link that leaves the
       allowlist; the guard was verified earlier on Linux).
-- [ ] Exercise the MSI path, kiosk mode, SSO, and memory under a live tenant.
+- [ ] Before claiming full support, exercise the MSI path, kiosk mode, SSO, and memory under a live
+      tenant. These are accepted as assumptions for the demo launch, not verified behavior.
 
 ## Playtest evidence
 
@@ -127,7 +128,10 @@ verified in this repo.
 - [x] Windows 10 LTSC demo installer: dual-pane placement, context-menu suppression, and
       `Ctrl+Shift+Q` confirmed; see `history.md` for the Wine limitation and VM setup.
 
-## Manual / cannot verify in this Linux environment
+## Assumed for now — check before claiming support
+
+These are accepted for the current demo launch. They were not exercised in the 2026-10-26 smoke
+test and must be checked before the template is described as fully verified.
 
 - [ ] Install and launch the MSI on Windows 10/11 (the NSIS installer was smoke-tested).
 - [ ] Memory measurement in Task Manager under active Power Apps load.

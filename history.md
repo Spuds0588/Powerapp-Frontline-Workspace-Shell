@@ -52,6 +52,9 @@ moved to a KVM Windows VM.
 - Kiosk mode, Microsoft Entra SSO, memory under a live tenant, and the MSI path (the NSIS installer was
   the one smoke-tested). The demo pages are labeled reference screenshots, not a live Power Apps
   session.
+- These are accepted as assumptions for this demo launch, not verified behavior. They stay open in
+  `todo.md` under "Assumed for now — check before claiming support" and must be exercised before the
+  template is described as fully verified.
 
 ### Reusable findings for the next template
 
