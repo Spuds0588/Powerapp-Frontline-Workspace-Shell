@@ -108,16 +108,28 @@ verified in this repo.
 - [x] Verify in Chromium at 1280 and 390: every scene, every rail, no overflow, no console errors.
 - [x] Push, confirm Pages rebuilds, and check the live root page.
 
+## Phase 9 — Windows smoke test
+
+- [x] Install the demo-profile NSIS installer on Windows 10 LTSC in a KVM VM and launch the shell.
+- [x] Confirm the embedded demo title, both pane URLs, 420 px right sidebar, and 860/420 split at
+      1280x800 after maximize.
+- [x] Confirm context-menu suppression and `Ctrl+Shift+Q` exit; relaunch from the desktop shortcut.
+- [x] Record the Wine limitation and the reusable Windows-VM procedure in `history.md`.
+- [ ] Exercise off-allowlist navigation on Windows (the demo pages have no link that leaves the
+      allowlist; the guard was verified earlier on Linux).
+- [ ] Exercise the MSI path, kiosk mode, SSO, and memory under a live tenant.
+
 ## Playtest evidence
 
 - [x] Run the debug shell on X11 against local pages: window creation, both pane loads, allowlist
       block, context-menu suppression, resize event, and `Ctrl+Shift+Q` exit all observed. Tauri's GTK
       backend stacks child webviews, so dual-pane placement is not verifiable here.
+- [x] Windows 10 LTSC demo installer: dual-pane placement, context-menu suppression, and
+      `Ctrl+Shift+Q` confirmed; see `history.md` for the Wine limitation and VM setup.
 
 ## Manual / cannot verify in this Linux environment
 
-- [ ] Install and launch the MSI on Windows 10/11.
-- [ ] Launch the demo-profile installer on Windows and confirm dual-pane placement.
+- [ ] Install and launch the MSI on Windows 10/11 (the NSIS installer was smoke-tested).
 - [ ] Memory measurement in Task Manager under active Power Apps load.
 - [ ] Microsoft Entra ID SSO popup behavior against a live tenant.
 - [ ] Kiosk behavior on a Windows kiosk account.

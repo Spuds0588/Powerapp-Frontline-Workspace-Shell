@@ -40,7 +40,9 @@ screenshots, not live tenant data. `demo/` holds the two static pages the instal
 - Download the unsigned demo installer from
   [Releases → demo-latest](https://github.com/Spuds0588/Powerapp-Frontline-Workspace-Shell/releases/tag/demo-latest).
   Windows SmartScreen may warn; the build is not code-signed.
-- The installer opens the dispatch pairing: a Power Apps dashboard and a Teams recap.
+- The installer opens the dispatch pairing: a Power Apps dashboard and a Teams recap. The demo NSIS
+  installer was smoke-tested on Windows 10 LTSC: both panes loaded, the 420 px right sidebar matched
+  the config, the context menu was suppressed, and `Ctrl+Shift+Q` closed the app.
 - To rebuild it, run **Actions → Build Enterprise Desktop Shell → Run workflow** with
   **Configuration to embed** set to `demo`.
 

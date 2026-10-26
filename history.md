@@ -3,6 +3,82 @@
 All notable changes, decisions, and build-pipeline findings for the Powerapp Frontline Workspace
 Shell template. Newest first.
 
+## 2026-10-26 — Windows demo smoke test (Wine ruled out for WebView2 visuals)
+
+### What was tested
+
+The published `demo-latest` NSIS installer, on a real Windows 10 desktop, not a source-only claim.
+The test host was Debian 13 with Docker 29.9.1 and `/dev/kvm`. A Wine attempt came first because it is
+much lighter; it installed and launched the app but could not render WebView2, so the visual check
+moved to a KVM Windows VM.
+
+### Wine result: installer and shell launch work, rendering does not
+
+- Image: `scottyhardy/docker-wine:latest`, Wine 11.0, X11 display, 64-bit prefix.
+- `FrontlineShell_1.0.0_x64-setup.exe /S` installed to
+  `C:\users\root\AppData\Local\FrontlineShell` and installed WebView2
+  `156.0.4314.42` through the bundled bootstrapper. The app started and created a 1440x900 window
+  titled `Frontline Demo Console`. Its log showed the embedded demo config and both
+  `[NAVIGATION][ALLOWED]` lines for the live Pages reference pages.
+- The window content was blank white. This is the known Wine wall in
+  [WebView2Feedback #5720](https://github.com/MicrosoftEdge/WebView2Feedback/issues/5720): under Wine,
+  WebView2 appends the removed `--use-gl=swiftshader` value and Chromium's software output device
+  needs a WARP D3D11 device plus DirectComposition, neither of which Wine provides. No Chromium flag
+  combination fixes it. It is not a bug in this template.
+- Consequence: Wine is useful for testing the NSIS payload, the embedded config, process launch, and
+  navigation logging. It cannot validate what the user sees. Do not spend time tuning WebView2 flags
+  for Wine; use a Windows VM or a real Windows machine for visual checks.
+
+### Windows result
+
+- Image: `dockurr/windows` 6.06, `VERSION=10l` (Windows 10 Enterprise LTSC 21H2 evaluation), 6 GB
+  RAM, 4 vCPU, 48 GB growable disk. The 4.9 GB ISO downloaded from Microsoft and was mounted as
+  `/custom.iso` to skip the container's own downloader. Boot to desktop took about six minutes.
+- The shared folder appeared as `Z:`. A small `run.bat` installed the demo silently (`/S`, exit 0),
+  waited 20 seconds, and launched `%LOCALAPPDATA%\FrontlineShell\frontline-desktop-shell.exe`.
+- The shell opened at 1440x900 with the title `Frontline Demo Console`. The primary pane loaded the
+  Power Apps model-driven dashboard reference and the secondary pane loaded the Teams recap reference.
+- After maximizing to the VM's 1280x800 desktop, the pane boundary sat at x=860, leaving the
+  configured 420 px sidebar on the right. That matches `calculate_layout`: 1280 - 420 = 860, with the
+  sidebar at 420. The reference images use `object-fit: cover`, so the fixed-size screenshots crop
+  at the pane edges; that is the reference-page behavior, not a layout error.
+- Right-clicking the primary pane produced no context menu. `Ctrl+Shift+Q` closed the app. Relaunching
+  from the desktop shortcut worked.
+
+### Not verified
+
+- Off-allowlist navigation on Windows. The guard is unchanged and was exercised earlier on Linux; the
+  demo pages contain no link that leaves `spuds0588.github.io`.
+- Kiosk mode, Microsoft Entra SSO, memory under a live tenant, and the MSI path (the NSIS installer was
+  the one smoke-tested). The demo pages are labeled reference screenshots, not a live Power Apps
+  session.
+
+### Reusable findings for the next template
+
+1. **Wine cannot be the visual gate for Tauri/WebView2.** It can prove the installer runs and the
+   app process starts, but Chromium has no presentable output device under Wine. Budget a KVM
+   Windows VM for the screenshot check.
+2. **`dockurr/windows` with `VERSION=10l` is a workable smoke-test box.** It needs `/dev/kvm` and
+   `/dev/net/tun`, about 6 GB RAM, and a 48 GB sparse disk. Expose 8006 for noVNC. Use a shared
+   folder rather than typing commands into the guest.
+3. **Mount a pre-downloaded ISO as `/custom.iso`.** The container's aria2 downloader can stall after
+   the ISO is complete and then restart from zero; the explicit ISO mount is deterministic. Verify it
+   with `7z t` before booting.
+4. **Automate install and launch from the shared folder.** A `run.bat` with `start /wait ... /S`, a
+   short wait, then `start "" %LOCALAPPDATA%\...` is enough. The NSIS exit code and a small log file
+   on `Z:` make the result inspectable from the host.
+5. **noVNC keyboard events need the canvas, not `document`.** For the Windows guest, dispatch the
+   key sequence to the `<canvas>`; `Ctrl+Shift+Q` then closes the app. Mouse events on the canvas also
+   work for opening the shared folder and launching the batch file.
+6. **The demo profile is correctly embedded.** The Windows title, pane URLs, and 420 px sidebar all
+   came from `config.demo.json`; the installer did not fall back to the production config.
+
+### Cleanup
+
+Removed the Wine prefix, both test containers, the downloaded Wine and Windows images, and the
+`.winvm` directory (4.9 GB ISO plus 8.7 GB disk). No build output or test logs remain. The VM
+framebuffer screenshot is local at `verification/windows-demo.png` and is git-ignored.
+
 ## 2026-10-25 — The landing page is the demo
 
 ### Shipped

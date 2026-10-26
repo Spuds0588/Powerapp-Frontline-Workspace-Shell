@@ -112,12 +112,16 @@ reads it at runtime; this template embeds it, so it must be committed.)
 | Workflow `config` input | Dispatch with `demo`; confirm the embedded title is `Frontline Demo Console` and installers exist |
 | `demo/` / `config.demo.json` | `python3 -m json.tool`; serve locally; check every page at desktop and mobile widths |
 | `index.html` / README | Serve locally, exercise the page in a browser, then check the live Pages URL |
-| Shell behavior | Run on Windows and confirm pane layout, blocked navigation log, kiosk, `Ctrl+Shift+Q` |
+| Shell behavior | Run on Windows and confirm pane layout, context-menu suppression, `Ctrl+Shift+Q`; document what was not exercised |
 
 Linux playtests have a known trap: Tauri/Wry packs child webviews into a `gtk::Box` and ignores
 `add_child` bounds, so both panes stack vertically. The product target is Windows/WebView2. Do not add
 GTK-specific layout code unless cross-platform becomes a real requirement. The full Linux/macOS
 build research, including Wayland shortcut and macOS signing limits, is in `history.md`.
+
+Wine is not a visual gate for this app. Wine can install the NSIS payload and start the shell, but
+WebView2 cannot present frames under Wine (WebView2Feedback #5720). Use a Windows 10/11 VM or a real
+machine for the pane screenshot; the 2026-10-26 smoke test is in `history.md`.
 
 CI cache keys must only be written by successful builds. `cache-on-failure` once saved an incomplete
 target under a reusable key, so every later run reported the cache as current and recompiled the
@@ -131,3 +135,7 @@ root window, not injected into the remote page.
 Remove `src-tauri/target/` after local compile checks; it is hundreds of MB and git-ignored. Do not
 leave downloaded CI artifacts, test screenshots, or logs in the workspace. Keep the five tracked
 `demo/shots/` references. Finish with `git status` and a `du -sh` sanity check.
+
+A Windows smoke test via `dockurr/windows` leaves a multi-GB `.winvm` and Docker images. Remove both,
+plus the Wine prefix if one was used. The only allowed local extra is a git-ignored verification
+screenshot; do not commit it as a product asset.
